@@ -3,534 +3,355 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistema de Representante Comercial</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>Sistema Comercial</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f4f3ef;
+    --bg: #f0f2f5;
     --surface: #ffffff;
-    --surface2: #f9f8f5;
-    --border: #e8e5de;
-    --text: #1a1a1a;
-    --text2: #666;
-    --green: #22c55e;
-    --green-light: #dcfce7;
-    --blue: #3b82f6;
-    --blue-light: #dbeafe;
-    --yellow: #f59e0b;
-    --yellow-light: #fef3c7;
-    --red: #ef4444;
-    --red-light: #fee2e2;
-    --shadow: 0 4px 24px rgba(0,0,0,0.07);
-    --radius: 16px;
+    --surface2: #f7f8fa;
+    --border: #e2e5ea;
+    --text: #111827;
+    --text2: #6b7280;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --blue: #2563eb;
+    --blue-light: #eff6ff;
+    --yellow: #d97706;
+    --yellow-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --shadow: 0 1px 6px rgba(0,0,0,0.07);
+    --radius: 8px;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans', sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; line-height:1.5; }
 
-  /* HEADER */
   header {
     background:#fff;
-    border-bottom:2px solid var(--border);
-    padding:0 32px;
+    border-bottom:1px solid var(--border);
+    padding:0 28px;
     display:flex;
     align-items:center;
-    gap:24px;
-    height:70px;
+    gap:20px;
+    height:60px;
     position:sticky;
     top:0;
     z-index:100;
-    box-shadow:0 2px 12px rgba(0,0,0,0.05);
-  }
-  .logo-area {
-    display:flex;
-    align-items:center;
-    gap:14px;
-    flex:1;
+    box-shadow:0 1px 4px rgba(0,0,0,0.05);
   }
   .logo-upload-btn {
-    width:48px; height:48px;
-    border-radius:12px;
-    border:2px dashed var(--border);
-    background:var(--surface2);
+    width:200px; height:40px;
+    border-radius:6px;
+    border:1.5px dashed #cbd5e1;
+    background:#f8fafc;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    transition:all .2s;
-    position:relative;
-    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    gap:7px; font-size:12px; font-weight:500; color:#94a3b8;
+    transition:all .2s; position:relative; overflow:hidden; flex-shrink:0;
   }
-  .logo-upload-btn:hover { border-color:#3b82f6; background:#dbeafe; }
-  .logo-upload-btn img { width:100%; height:100%; object-fit:cover; border-radius:10px; }
+  .logo-upload-btn:hover { border-color:var(--blue); color:var(--blue); background:#eff6ff; }
+  .logo-upload-btn img { width:100%; height:100%; object-fit:contain; padding:4px 10px; }
   .logo-upload-btn input { position:absolute; inset:0; opacity:0; cursor:pointer; }
-  .system-name { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--text); }
-  .system-name span { color:#3b82f6; }
-  nav { display:flex; gap:4px; }
-  .nav-btn {
-    padding:8px 20px;
-    border-radius:10px;
-    border:none;
-    background:transparent;
-    font-family:'DM Sans',sans-serif;
-    font-size:14px;
-    font-weight:500;
-    cursor:pointer;
-    color:var(--text2);
-    transition:all .2s;
-  }
-  .nav-btn.active { background:#3b82f6; color:#fff; }
-  .nav-btn:hover:not(.active) { background:var(--surface2); color:var(--text); }
 
-  /* MAIN */
-  main { padding:32px; max-width:1400px; margin:0 auto; }
+  nav { display:flex; gap:2px; margin-left:auto; }
+  .nav-btn {
+    padding:6px 16px; border-radius:6px; border:none; background:transparent;
+    font-family:'Inter',sans-serif; font-size:13px; font-weight:500;
+    cursor:pointer; color:var(--text2); transition:all .15s;
+  }
+  .nav-btn.active { background:#2563eb; color:#fff; }
+  .nav-btn:hover:not(.active) { background:#f1f5f9; color:var(--text); }
+
+  main { padding:28px; max-width:1400px; margin:0 auto; }
   .page { display:none; }
   .page.active { display:block; }
 
-  /* CARDS GRID */
   .stats-row {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:16px;
-    margin-bottom:28px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:12px; margin-bottom:24px;
   }
   .stat-card {
-    background:#fff;
-    border-radius:var(--radius);
-    padding:20px;
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
+    background:#fff; border-radius:var(--radius);
+    padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border);
   }
-  .stat-card .label { font-size:12px; color:var(--text2); font-weight:500; text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
-  .stat-card .value { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; }
+  .stat-card .label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; }
+  .stat-card .value { font-size:26px; font-weight:700; line-height:1; }
   .stat-card .sub { font-size:12px; color:var(--text2); margin-top:4px; }
   .stat-card.s-green .value { color:var(--green); }
   .stat-card.s-blue .value { color:var(--blue); }
   .stat-card.s-yellow .value { color:var(--yellow); }
   .stat-card.s-red .value { color:var(--red); }
 
-  /* SECTION TITLE */
   .sec-title {
-    font-family:'Syne',sans-serif;
-    font-size:18px;
-    font-weight:700;
-    margin-bottom:16px;
-    display:flex;
-    align-items:center;
-    gap:10px;
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.7px; color:var(--text2);
+    margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);
   }
-  .sec-title::after { content:''; flex:1; height:2px; background:var(--border); border-radius:2px; }
 
-  /* VENDEDORES GRID */
   .vendedores-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:20px;
-    margin-bottom:32px;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr));
+    gap:12px; margin-bottom:28px;
   }
   .vendedor-card {
-    background:#fff;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
-    overflow:hidden;
-    transition:transform .2s, box-shadow .2s;
-    position:relative;
+    background:#fff; border-radius:var(--radius);
+    box-shadow:var(--shadow); border:1px solid var(--border);
+    overflow:hidden; transition:box-shadow .2s;
   }
-  .vendedor-card:hover { transform:translateY(-3px); box-shadow:0 8px 32px rgba(0,0,0,0.1); }
-  .vendedor-card .card-header {
-    padding:20px 20px 14px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
-  .color-badge {
-    width:46px; height:46px;
-    border-radius:12px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:20px;
-    font-weight:800;
-    color:#fff;
-    flex-shrink:0;
-  }
-  .badge-verde { background:linear-gradient(135deg,#22c55e,#16a34a); }
-  .badge-azul { background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
-  .badge-amarelo { background:linear-gradient(135deg,#f59e0b,#d97706); }
-  .badge-vermelho { background:linear-gradient(135deg,#ef4444,#dc2626); }
+  .vendedor-card:hover { box-shadow:0 4px 14px rgba(0,0,0,0.1); }
+  .card-top { height:3px; }
+  .top-verde { background:#16a34a; }
+  .top-azul { background:#2563eb; }
+  .top-amarelo { background:#d97706; }
+  .top-vermelho { background:#dc2626; }
+  .card-header { padding:14px 14px 10px; display:flex; align-items:center; gap:10px; }
+  .color-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .dot-verde { background:#16a34a; }
+  .dot-azul { background:#2563eb; }
+  .dot-amarelo { background:#d97706; }
+  .dot-vermelho { background:#dc2626; }
   .vendedor-info { flex:1; min-width:0; }
-  .vendedor-name { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .vendedor-meta { font-size:12px; color:var(--text2); }
-  .card-actions { display:flex; gap:6px; }
+  .vendedor-name { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vtag { display:inline-block; margin-top:3px; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.3px; }
+  .vtag-verde { background:var(--green-light); color:var(--green); }
+  .vtag-azul { background:var(--blue-light); color:var(--blue); }
+  .vtag-amarelo { background:var(--yellow-light); color:var(--yellow); }
+  .vtag-vermelho { background:var(--red-light); color:var(--red); }
+  .card-actions { display:flex; gap:4px; }
   .btn-icon {
-    width:30px; height:30px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-    font-size:14px;
-    transition:all .2s;
+    width:26px; height:26px; border-radius:5px;
+    border:1px solid var(--border); background:#fff;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--text2); transition:all .15s;
   }
-  .btn-edit { background:#dbeafe; color:#3b82f6; }
-  .btn-edit:hover { background:#3b82f6; color:#fff; }
-  .btn-del { background:#fee2e2; color:#ef4444; }
-  .btn-del:hover { background:#ef4444; color:#fff; }
-  .btn-add-venda { background:#dcfce7; color:#22c55e; }
-  .btn-add-venda:hover { background:#22c55e; color:#fff; }
-  .card-body { padding:0 20px 16px; }
-  .progress-wrap { margin-bottom:8px; }
-  .progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text2); margin-bottom:5px; }
-  .progress-bar { height:8px; background:var(--border); border-radius:99px; overflow:hidden; }
-  .progress-fill { height:100%; border-radius:99px; transition:width .5s ease; }
-  .fill-verde { background:linear-gradient(90deg,#22c55e,#4ade80); }
-  .fill-azul { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
-  .fill-amarelo { background:linear-gradient(90deg,#f59e0b,#fcd34d); }
-  .fill-vermelho { background:linear-gradient(90deg,#ef4444,#f87171); }
+  .btn-icon:hover { background:#f1f5f9; color:var(--text); }
+  .btn-icon.add:hover { background:var(--green-light); color:var(--green); border-color:var(--green); }
+  .btn-icon.del:hover { background:var(--red-light); color:var(--red); border-color:var(--red); }
+  .card-body { padding:0 14px 12px; }
+  .progress-label { display:flex; justify-content:space-between; font-size:11px; color:var(--text2); font-weight:500; margin-bottom:5px; }
+  .progress-bar { height:5px; background:#e5e7eb; border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:99px; transition:width .4s ease; }
+  .fill-verde { background:#16a34a; }
+  .fill-azul { background:#2563eb; }
+  .fill-amarelo { background:#d97706; }
+  .fill-vermelho { background:#dc2626; }
   .card-footer {
+    border-top:1px solid var(--border); padding:9px 14px;
+    display:grid; grid-template-columns:1fr 1fr 1fr;
     background:var(--surface2);
-    border-top:1px solid var(--border);
-    padding:10px 20px;
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
   }
-  .foot-val { font-weight:600; }
-  .chip {
-    display:inline-block;
-    padding:2px 10px;
-    border-radius:99px;
-    font-size:11px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-  }
-  .chip-verde { background:var(--green-light); color:#16a34a; }
-  .chip-azul { background:var(--blue-light); color:#1d4ed8; }
-  .chip-amarelo { background:var(--yellow-light); color:#92400e; }
-  .chip-vermelho { background:var(--red-light); color:#dc2626; }
+  .cf-item { text-align:center; }
+  .cf-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; color:var(--text2); }
+  .cf-val { font-size:12px; font-weight:700; margin-top:2px; }
 
-  /* BOTÃO PRIMÁRIO */
   .btn-primary {
-    background:linear-gradient(135deg,#3b82f6,#2563eb);
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    padding:10px 22px;
-    font-family:'DM Sans',sans-serif;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    transition:all .2s;
-    display:inline-flex; align-items:center; gap:8px;
+    background:#2563eb; color:#fff; border:none; border-radius:6px;
+    padding:8px 16px; font-family:'Inter',sans-serif; font-size:13px;
+    font-weight:600; cursor:pointer; transition:background .15s;
+    display:inline-flex; align-items:center; gap:5px;
   }
-  .btn-primary:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(59,130,246,.35); }
+  .btn-primary:hover { background:#1d4ed8; }
   .btn-secondary {
-    background:var(--surface);
-    color:var(--text);
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    padding:9px 22px;
-    font-family:'DM Sans',sans-serif;
-    font-size:14px;
-    font-weight:500;
-    cursor:pointer;
-    transition:all .2s;
+    background:#fff; color:var(--text); border:1px solid var(--border);
+    border-radius:6px; padding:7px 16px; font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:500; cursor:pointer; transition:background .15s;
   }
-  .btn-secondary:hover { background:var(--surface2); }
+  .btn-secondary:hover { background:#f1f5f9; }
 
-  /* FILTRO PERÍODO */
-  .filter-row {
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:24px;
-    flex-wrap:wrap;
-  }
+  .filter-row { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
   .filter-tabs {
-    display:flex;
-    background:var(--surface);
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    overflow:hidden;
+    display:flex; border:1px solid var(--border); border-radius:6px;
+    overflow:hidden; background:#fff;
   }
   .filter-tab {
-    padding:8px 18px;
-    font-size:13px;
-    font-weight:500;
-    cursor:pointer;
-    border:none;
-    background:transparent;
-    font-family:'DM Sans',sans-serif;
-    color:var(--text2);
-    transition:all .2s;
+    padding:6px 16px; font-size:12px; font-weight:500;
+    cursor:pointer; border:none; background:transparent;
+    font-family:'Inter',sans-serif; color:var(--text2); transition:all .15s;
   }
-  .filter-tab.active { background:#3b82f6; color:#fff; }
+  .filter-tab.active { background:#2563eb; color:#fff; }
   .filter-input {
-    padding:8px 14px;
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    font-size:13px;
-    font-family:'DM Sans',sans-serif;
-    background:var(--surface);
-    color:var(--text);
+    padding:6px 12px; border:1px solid var(--border); border-radius:6px;
+    font-size:12px; font-family:'Inter',sans-serif; background:#fff; color:var(--text);
   }
-  .filter-input:focus { outline:none; border-color:#3b82f6; }
+  .filter-input:focus { outline:none; border-color:var(--blue); }
 
-  /* METAS PAGE */
-  .metas-grid {
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-    gap:20px;
-    margin-bottom:32px;
-  }
+  .metas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px; margin-bottom:28px; }
   .meta-card {
-    background:#fff;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
-    padding:22px;
+    background:#fff; border-radius:var(--radius);
+    box-shadow:var(--shadow); border:1px solid var(--border); padding:18px;
   }
-  .meta-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
-  .meta-info { flex:1; }
-  .meta-name { font-family:'Syne',sans-serif; font-weight:700; font-size:15px; }
-  .meta-periodo { font-size:12px; color:var(--text2); }
-  .pizza-wrap { display:flex; align-items:center; gap:20px; }
-  .pizza-svg { flex-shrink:0; }
+  .meta-header { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .meta-name { font-size:14px; font-weight:600; }
+  .pizza-wrap { display:flex; align-items:center; gap:16px; }
   .pizza-legend { flex:1; }
-  .legend-item { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:13px; }
-  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
-  .legend-val { margin-left:auto; font-weight:600; }
+  .legend-item { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text2); }
+  .legend-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .legend-val { margin-left:auto; font-weight:600; color:var(--text); font-size:12px; }
   .meta-footer-stats {
-    display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:10px;
-    margin-top:16px;
-    padding-top:14px;
-    border-top:1px solid var(--border);
+    display:grid; grid-template-columns:1fr 1fr 1fr;
+    gap:8px; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);
   }
   .mfs { text-align:center; }
-  .mfs .v { font-family:'Syne',sans-serif; font-weight:700; font-size:16px; }
-  .mfs .l { font-size:11px; color:var(--text2); }
+  .mfs .v { font-size:15px; font-weight:700; }
+  .mfs .l { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; color:var(--text2); margin-top:2px; }
 
-  /* RANKING */
-  .ranking-wrap { max-width:700px; }
-  .rank-top3 { display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:12px; margin-bottom:20px; align-items:end; }
+  .ranking-wrap { max-width:680px; }
+  .rank-top3 { display:grid; grid-template-columns:1fr 1.08fr 1fr; gap:10px; margin-bottom:14px; align-items:end; }
   .rank-podium {
-    background:#fff;
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    border:1px solid var(--border);
-    padding:18px 14px;
-    text-align:center;
-    position:relative;
-    transition:transform .2s;
+    background:#fff; border-radius:var(--radius);
+    box-shadow:var(--shadow); border:1px solid var(--border);
+    padding:16px 12px; text-align:center; transition:box-shadow .2s;
   }
-  .rank-podium:hover { transform:translateY(-3px); }
-  .rank-podium.pos1 { background:linear-gradient(135deg,#fef9c3,#fff); border-color:#f59e0b; }
-  .rank-podium.pos2 { background:linear-gradient(135deg,#f1f5f9,#fff); border-color:#94a3b8; }
-  .rank-podium.pos3 { background:linear-gradient(135deg,#fef3ec,#fff); border-color:#f97316; }
-  .rank-crown { font-size:28px; display:block; margin-bottom:6px; }
-  .rank-num { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--text2); }
-  .rank-name { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; margin:6px 0 4px; }
-  .rank-val { font-size:13px; font-weight:600; color:#3b82f6; }
+  .rank-podium:hover { box-shadow:0 4px 14px rgba(0,0,0,0.1); }
+  .rank-podium.pos1 { border-top:3px solid #d97706; }
+  .rank-podium.pos2 { border-top:3px solid #94a3b8; }
+  .rank-podium.pos3 { border-top:3px solid #b45309; }
+  .rank-medal { font-size:20px; display:block; margin-bottom:5px; }
+  .rank-pos-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text2); }
+  .rank-name { font-size:13px; font-weight:700; margin:6px 0 3px; }
+  .rank-val { font-size:13px; font-weight:700; color:var(--blue); }
+  .rank-sub { font-size:11px; color:var(--text2); margin-top:3px; }
   .rank-table { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); overflow:hidden; }
   .rank-row {
-    display:grid;
-    grid-template-columns:48px 1fr auto auto;
-    gap:12px;
-    padding:13px 18px;
-    border-bottom:1px solid var(--border);
-    align-items:center;
-    font-size:14px;
-    transition:background .15s;
+    display:grid; grid-template-columns:40px 1fr auto auto;
+    gap:10px; padding:10px 16px; border-bottom:1px solid var(--border);
+    align-items:center; transition:background .1s;
   }
   .rank-row:last-child { border-bottom:none; }
   .rank-row:hover { background:var(--surface2); }
-  .rank-pos { font-family:'Syne',sans-serif; font-weight:700; color:var(--text2); text-align:center; }
-  .rank-name-col { font-weight:600; }
-  .rank-vendas-col { color:var(--text2); font-size:12px; }
-  .rank-val-col { font-weight:700; color:#3b82f6; font-family:'Syne',sans-serif; }
+  .rank-pos { font-size:12px; font-weight:700; color:var(--text2); text-align:center; }
+  .rank-name-col { font-weight:600; font-size:13px; }
+  .rank-vendas-col { font-size:11px; color:var(--text2); }
+  .rank-val-col { font-size:13px; font-weight:700; color:var(--blue); }
 
-  /* MODAL */
   .modal-overlay {
-    position:fixed; inset:0;
-    background:rgba(0,0,0,.45);
-    backdrop-filter:blur(4px);
-    z-index:1000;
-    display:none;
-    align-items:center;
-    justify-content:center;
+    position:fixed; inset:0; background:rgba(15,23,42,.4);
+    backdrop-filter:blur(3px); z-index:1000;
+    display:none; align-items:center; justify-content:center;
   }
   .modal-overlay.open { display:flex; }
   .modal {
-    background:#fff;
-    border-radius:20px;
-    padding:32px;
-    width:100%;
-    max-width:440px;
-    box-shadow:0 24px 80px rgba(0,0,0,.2);
-    animation:slideUp .25s ease;
+    background:#fff; border-radius:10px; padding:26px;
+    width:100%; max-width:420px;
+    box-shadow:0 20px 60px rgba(0,0,0,.15);
+    animation:fadeUp .2s ease;
   }
-  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-  .modal-title { font-family:'Syne',sans-serif; font-size:20px; font-weight:800; margin-bottom:24px; }
-  .form-group { margin-bottom:18px; }
-  .form-label { display:block; font-size:13px; font-weight:500; color:var(--text2); margin-bottom:6px; }
+  @keyframes fadeUp { from{transform:translateY(10px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .modal-title { font-size:15px; font-weight:700; margin-bottom:18px; }
+  .form-group { margin-bottom:14px; }
+  .form-label { display:block; font-size:11px; font-weight:600; color:var(--text2); margin-bottom:5px; text-transform:uppercase; letter-spacing:.4px; }
   .form-input {
-    width:100%;
-    padding:10px 14px;
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    font-size:14px;
-    font-family:'DM Sans',sans-serif;
-    color:var(--text);
-    transition:border-color .2s;
+    width:100%; padding:8px 12px; border:1px solid var(--border);
+    border-radius:6px; font-size:13px; font-family:'Inter',sans-serif;
+    color:var(--text); transition:border-color .15s;
   }
-  .form-input:focus { outline:none; border-color:#3b82f6; }
-  .color-selector { display:flex; gap:10px; }
+  .form-input:focus { outline:none; border-color:var(--blue); }
+  .color-selector { display:flex; gap:8px; }
   .color-opt {
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    border:2px solid var(--border);
-    cursor:pointer;
-    text-align:center;
-    font-size:12px;
-    font-weight:600;
-    transition:all .2s;
+    flex:1; padding:8px 6px; border-radius:6px; border:1.5px solid var(--border);
+    cursor:pointer; text-align:center; font-size:12px; font-weight:500;
+    color:var(--text2); transition:all .15s;
   }
-  .color-opt.sel-verde { border-color:#22c55e; background:#dcfce7; color:#16a34a; }
-  .color-opt.sel-azul { border-color:#3b82f6; background:#dbeafe; color:#1d4ed8; }
-  .color-opt.sel-amarelo { border-color:#f59e0b; background:#fef3c7; color:#92400e; }
-  .color-opt.sel-vermelho { border-color:#ef4444; background:#fee2e2; color:#dc2626; }
-  .color-opt:not(.sel-verde):not(.sel-azul):not(.sel-amarelo):not(.sel-vermelho) { color:var(--text2); }
-  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:8px; }
+  .color-opt.sel-verde { border-color:var(--green); background:var(--green-light); color:var(--green); }
+  .color-opt.sel-azul { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
+  .color-opt.sel-amarelo { border-color:var(--yellow); background:var(--yellow-light); color:var(--yellow); }
+  .color-opt.sel-vermelho { border-color:var(--red); background:var(--red-light); color:var(--red); }
+  .modal-actions { display:flex; gap:8px; justify-content:flex-end; margin-top:6px; }
 
-  /* EMPTY STATE */
-  .empty-state {
-    text-align:center;
-    padding:60px 20px;
-    color:var(--text2);
+  .cores-legenda { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .cl-item {
+    display:flex; align-items:center; gap:6px;
+    background:#fff; border:1px solid var(--border);
+    border-radius:5px; padding:5px 10px; font-size:12px; color:var(--text2);
   }
-  .empty-state .icon { font-size:48px; margin-bottom:12px; }
-  .empty-state h3 { font-family:'Syne',sans-serif; font-size:18px; color:var(--text); margin-bottom:8px; }
+  .cl-dot { width:8px; height:8px; border-radius:2px; }
 
-  /* LEGENDA CORES */
-  .cores-legenda {
-    display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px;
-  }
-  .cores-legenda .cl-item {
-    display:flex; align-items:center; gap:7px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:6px 12px;
-    font-size:12px;
-    font-weight:500;
-  }
-  .cl-dot { width:10px; height:10px; border-radius:50%; }
+  .empty-state { text-align:center; padding:48px 20px; color:var(--text2); }
+  .empty-state .icon { font-size:32px; margin-bottom:10px; }
+  .empty-state h3 { font-size:14px; font-weight:600; color:var(--text); margin-bottom:6px; }
+  .empty-state p { font-size:13px; }
 
-  /* NOTIFICAÇÃO */
   .toast {
-    position:fixed;
-    bottom:24px; right:24px;
-    background:#1a1a1a;
-    color:#fff;
-    padding:12px 20px;
-    border-radius:12px;
-    font-size:14px;
-    font-weight:500;
-    z-index:9999;
-    box-shadow:0 8px 32px rgba(0,0,0,.25);
-    transform:translateY(80px);
-    opacity:0;
-    transition:all .3s;
+    position:fixed; bottom:20px; right:20px;
+    background:#1e293b; color:#fff; padding:10px 16px; border-radius:6px;
+    font-size:13px; font-weight:500; z-index:9999;
+    box-shadow:0 6px 20px rgba(0,0,0,.2);
+    transform:translateY(60px); opacity:0; transition:all .25s;
   }
   .toast.show { transform:translateY(0); opacity:1; }
 
-  /* VENDAS LIST em modal */
-  .vendas-list { max-height:200px; overflow-y:auto; margin:12px 0; }
+  .vendas-list { max-height:160px; overflow-y:auto; margin:8px 0; }
   .venda-item {
     display:flex; justify-content:space-between; align-items:center;
-    padding:8px 12px;
-    background:var(--surface2);
-    border-radius:8px;
-    margin-bottom:6px;
-    font-size:13px;
+    padding:6px 10px; background:var(--surface2);
+    border-radius:5px; margin-bottom:4px; font-size:12px;
   }
-  .venda-item .v-val { font-weight:700; color:#3b82f6; }
-  .venda-item .v-del { background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:16px; padding:0 4px; }
+  .venda-item .v-val { font-weight:700; color:var(--blue); }
+  .venda-item .v-del { background:transparent; border:none; color:var(--red); cursor:pointer; font-size:13px; padding:0 3px; }
+
+  .row-between { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
 
   @media(max-width:600px){
-    main{padding:16px;}
-    header{padding:0 16px;}
+    main{padding:14px;} header{padding:0 14px;}
     .rank-top3{grid-template-columns:1fr;}
-    .rank-podium.pos2{order:-1;}
+    .logo-upload-btn{width:160px;}
   }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-area">
-    <div class="logo-upload-btn" id="logoBtnWrap" title="Clique para enviar sua logo">
-      <span id="logoEmoji">🏢</span>
-      <input type="file" accept="image/*" id="logoInput" onchange="loadLogo(this)">
-    </div>
-    <div class="system-name">Sales<span>Hub</span></div>
+  <div class="logo-upload-btn" id="logoBtnWrap" title="Clique para inserir sua logo">
+    <span id="logoIcon">🏢</span>
+    <span id="logoText">Inserir Logo</span>
+    <input type="file" accept="image/*" onchange="loadLogo(this)">
   </div>
   <nav>
-    <button class="nav-btn active" onclick="showPage('vendedores',this)">👥 Vendedores</button>
-    <button class="nav-btn" onclick="showPage('metas',this)">🎯 Metas</button>
-    <button class="nav-btn" onclick="showPage('ranking',this)">🏆 Ranking</button>
+    <button class="nav-btn active" onclick="showPage('vendedores',this)">Vendedores</button>
+    <button class="nav-btn" onclick="showPage('metas',this)">Metas</button>
+    <button class="nav-btn" onclick="showPage('ranking',this)">Ranking</button>
   </nav>
 </header>
 
 <main>
 
-  <!-- PAGE: VENDEDORES -->
   <div class="page active" id="page-vendedores">
     <div class="stats-row" id="statsRow"></div>
-
     <div class="cores-legenda">
-      <div class="cl-item"><div class="cl-dot" style="background:#22c55e"></div> Verde — Alto potencial</div>
-      <div class="cl-item"><div class="cl-dot" style="background:#3b82f6"></div> Azul — Bom potencial</div>
-      <div class="cl-item"><div class="cl-dot" style="background:#f59e0b"></div> Amarelo — Em desenvolvimento</div>
-      <div class="cl-item"><div class="cl-dot" style="background:#ef4444"></div> Vermelho — Precisa de atenção</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#16a34a"></div>Verde — Alto Potencial</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#2563eb"></div>Azul — Bom Potencial</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#d97706"></div>Amarelo — Em Desenvolvimento</div>
+      <div class="cl-item"><div class="cl-dot" style="background:#dc2626"></div>Vermelho — Precisa de Atenção</div>
     </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <div class="sec-title" style="flex:1;margin:0">Meus Vendedores</div>
-      <button class="btn-primary" onclick="openModal('add')">＋ Novo Vendedor</button>
+    <div class="row-between">
+      <div class="sec-title" style="margin:0;border:none;padding:0">Vendedores</div>
+      <button class="btn-primary" onclick="openModal('add')">+ Novo Vendedor</button>
     </div>
-
     <div class="vendedores-grid" id="vendedoresGrid"></div>
   </div>
 
-  <!-- PAGE: METAS -->
   <div class="page" id="page-metas">
     <div class="filter-row">
       <div class="filter-tabs">
-        <button class="filter-tab active" onclick="setFiltro('mes',this)">📅 Mês</button>
-        <button class="filter-tab" onclick="setFiltro('semana',this)">📆 Semana</button>
-        <button class="filter-tab" onclick="setFiltro('dia',this)">🗓️ Dia</button>
+        <button class="filter-tab active" onclick="setFiltro('mes',this)">Mês</button>
+        <button class="filter-tab" onclick="setFiltro('semana',this)">Semana</button>
+        <button class="filter-tab" onclick="setFiltro('dia',this)">Dia</button>
       </div>
-      <input type="date" class="filter-input" id="filtroData" onchange="renderAll()" value="">
+      <input type="date" class="filter-input" id="filtroData" onchange="renderAll()">
     </div>
-
     <div class="stats-row" id="metaStatsRow"></div>
-
     <div class="sec-title">Desempenho por Vendedor</div>
     <div class="metas-grid" id="metasGrid"></div>
   </div>
 
-  <!-- PAGE: RANKING -->
   <div class="page" id="page-ranking">
     <div class="filter-row">
       <div class="filter-tabs">
-        <button class="filter-tab active" onclick="setFiltro('mes',this)">📅 Mês</button>
-        <button class="filter-tab" onclick="setFiltro('semana',this)">📆 Semana</button>
-        <button class="filter-tab" onclick="setFiltro('dia',this)">🗓️ Dia</button>
+        <button class="filter-tab active" onclick="setFiltro('mes',this)">Mês</button>
+        <button class="filter-tab" onclick="setFiltro('semana',this)">Semana</button>
+        <button class="filter-tab" onclick="setFiltro('dia',this)">Dia</button>
       </div>
-      <input type="date" class="filter-input" id="filtroDataRank" onchange="renderAll()" value="">
+      <input type="date" class="filter-input" id="filtroDataRank" onchange="renderAll()">
     </div>
     <div class="sec-title">Ranking de Faturamento</div>
     <div class="ranking-wrap" id="rankingWrap"></div>
@@ -538,12 +359,12 @@
 
 </main>
 
-<!-- MODAL: VENDEDOR -->
+<!-- MODAL VENDEDOR -->
 <div class="modal-overlay" id="modalVendedor">
   <div class="modal">
     <div class="modal-title" id="modalTitle">Novo Vendedor</div>
     <div class="form-group">
-      <label class="form-label">Nome do Vendedor</label>
+      <label class="form-label">Nome</label>
       <input class="form-input" id="inputNome" placeholder="Ex: João Silva">
     </div>
     <div class="form-group">
@@ -551,31 +372,31 @@
       <input class="form-input" id="inputMeta" type="number" placeholder="Ex: 50000">
     </div>
     <div class="form-group">
-      <label class="form-label">Potencial (Cor)</label>
+      <label class="form-label">Potencial</label>
       <div class="color-selector">
-        <div class="color-opt" data-cor="verde" onclick="selectCor('verde')">🟢 Verde</div>
-        <div class="color-opt" data-cor="azul" onclick="selectCor('azul')">🔵 Azul</div>
-        <div class="color-opt" data-cor="amarelo" onclick="selectCor('amarelo')">🟡 Amarelo</div>
-        <div class="color-opt" data-cor="vermelho" onclick="selectCor('vermelho')">🔴 Verm.</div>
+        <div class="color-opt" data-cor="verde" onclick="selectCor('verde')">Verde</div>
+        <div class="color-opt" data-cor="azul" onclick="selectCor('azul')">Azul</div>
+        <div class="color-opt" data-cor="amarelo" onclick="selectCor('amarelo')">Amarelo</div>
+        <div class="color-opt" data-cor="vermelho" onclick="selectCor('vermelho')">Vermelho</div>
       </div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalVendedor')">Cancelar</button>
-      <button class="btn-primary" onclick="salvarVendedor()">✔ Salvar</button>
+      <button class="btn-primary" onclick="salvarVendedor()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: ADICIONAR VENDA -->
+<!-- MODAL VENDA -->
 <div class="modal-overlay" id="modalVenda">
   <div class="modal">
     <div class="modal-title" id="modalVendaTitle">Registrar Venda</div>
     <div class="form-group">
-      <label class="form-label">Valor da Venda (R$)</label>
+      <label class="form-label">Valor (R$)</label>
       <input class="form-input" id="inputValorVenda" type="number" placeholder="Ex: 3500">
     </div>
     <div class="form-group">
-      <label class="form-label">Data da Venda</label>
+      <label class="form-label">Data</label>
       <input class="form-input" id="inputDataVenda" type="date">
     </div>
     <div class="form-group">
@@ -583,12 +404,12 @@
       <input class="form-input" id="inputDescVenda" placeholder="Ex: Contrato Empresa XYZ">
     </div>
     <div class="form-group">
-      <label class="form-label" style="margin-bottom:8px">Vendas Registradas</label>
+      <label class="form-label">Histórico</label>
       <div class="vendas-list" id="vendasListModal"></div>
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="closeModal('modalVenda')">Fechar</button>
-      <button class="btn-primary" onclick="salvarVenda()">＋ Adicionar Venda</button>
+      <button class="btn-primary" onclick="salvarVenda()">+ Adicionar</button>
     </div>
   </div>
 </div>
@@ -596,14 +417,12 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ============ STATE ============
 let vendedores = JSON.parse(localStorage.getItem('vh_vendedores')||'[]');
 let filtroAtual = 'mes';
 let editId = null;
 let vendaVendedorId = null;
 let corSelecionada = 'verde';
 
-// ============ UTILS ============
 function save(){ localStorage.setItem('vh_vendedores', JSON.stringify(vendedores)); }
 function uid(){ return Date.now()+Math.random().toString(36).slice(2); }
 function fmt(v){ return 'R$ '+(+v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -615,48 +434,33 @@ function showToast(msg){
 }
 
 function getDateRange(){
-  const base = new Date();
-  if(filtroAtual==='dia'){
-    const d=document.getElementById('filtroData')?.value||document.getElementById('filtroDataRank')?.value||today();
-    return [d,d];
-  }
+  const d1=document.getElementById('filtroData'), d2=document.getElementById('filtroDataRank');
+  const ref=(d1&&d1.value)||(d2&&d2.value)||today();
+  if(filtroAtual==='dia') return [ref,ref];
   if(filtroAtual==='semana'){
-    const ref=new Date(document.getElementById('filtroData')?.value||document.getElementById('filtroDataRank')?.value||today());
-    const day=ref.getDay();
-    const mon=new Date(ref); mon.setDate(ref.getDate()-day+1);
+    const r=new Date(ref+'T00:00:00'), day=r.getDay()||7;
+    const mon=new Date(r); mon.setDate(r.getDate()-(day-1));
     const sun=new Date(mon); sun.setDate(mon.getDate()+6);
-    return [mon.toISOString().slice(0,10), sun.toISOString().slice(0,10)];
+    return [mon.toISOString().slice(0,10),sun.toISOString().slice(0,10)];
   }
-  // mes
-  const ref=document.getElementById('filtroData')?.value||document.getElementById('filtroDataRank')?.value||today();
-  const y=ref.slice(0,4), m=ref.slice(5,7);
-  const last=new Date(+y,+m,0).getDate();
+  const y=ref.slice(0,4),m=ref.slice(5,7),last=new Date(+y,+m,0).getDate();
   return [`${y}-${m}-01`,`${y}-${m}-${String(last).padStart(2,'0')}`];
 }
-
-function vendasNoPeriodo(v){
-  const [start,end]=getDateRange();
-  return (v.vendas||[]).filter(vd=>vd.data>=start && vd.data<=end);
-}
+function vendasNoPeriodo(v){ const [s,e]=getDateRange(); return (v.vendas||[]).filter(vd=>vd.data>=s&&vd.data<=e); }
 function totalPeriodo(v){ return vendasNoPeriodo(v).reduce((a,b)=>a+(+b.valor),0); }
 
-// ============ NAVIGATION ============
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  btn.classList.add('active');
-  renderAll();
+  btn.classList.add('active'); renderAll();
 }
-
 function setFiltro(f,btn){
   filtroAtual=f;
   btn.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderAll();
+  btn.classList.add('active'); renderAll();
 }
 
-// ============ LOGO ============
 function loadLogo(input){
   const file=input.files[0]; if(!file) return;
   const reader=new FileReader();
@@ -665,39 +469,37 @@ function loadLogo(input){
     let img=wrap.querySelector('img');
     if(!img){img=document.createElement('img');wrap.insertBefore(img,wrap.querySelector('input'));}
     img.src=e.target.result;
-    document.getElementById('logoEmoji').style.display='none';
+    document.getElementById('logoIcon').style.display='none';
+    document.getElementById('logoText').style.display='none';
     localStorage.setItem('vh_logo',e.target.result);
   };
   reader.readAsDataURL(file);
 }
-(function loadSavedLogo(){
+(function(){
   const l=localStorage.getItem('vh_logo'); if(!l) return;
   const wrap=document.getElementById('logoBtnWrap');
   const img=document.createElement('img'); img.src=l;
   wrap.insertBefore(img,wrap.querySelector('input'));
-  document.getElementById('logoEmoji').style.display='none';
+  document.getElementById('logoIcon').style.display='none';
+  document.getElementById('logoText').style.display='none';
 })();
 
-// ============ MODAL VENDEDOR ============
-function openModal(mode, id=null){
+function openModal(mode,id=null){
   editId=id;
   document.getElementById('modalTitle').textContent=mode==='add'?'Novo Vendedor':'Editar Vendedor';
   if(mode==='edit'){
     const v=vendedores.find(x=>x.id===id);
     document.getElementById('inputNome').value=v.nome;
     document.getElementById('inputMeta').value=v.meta;
-    corSelecionada=v.cor;
-    selectCor(v.cor);
+    corSelecionada=v.cor; selectCor(v.cor);
   } else {
     document.getElementById('inputNome').value='';
     document.getElementById('inputMeta').value='';
-    corSelecionada='verde';
-    selectCor('verde');
+    corSelecionada='verde'; selectCor('verde');
   }
   document.getElementById('modalVendedor').classList.add('open');
 }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-
 function selectCor(cor){
   corSelecionada=cor;
   document.querySelectorAll('.color-opt').forEach(el=>{
@@ -705,128 +507,95 @@ function selectCor(cor){
     if(el.dataset.cor===cor) el.classList.add('sel-'+cor);
   });
 }
-
 function salvarVendedor(){
   const nome=document.getElementById('inputNome').value.trim();
   const meta=parseFloat(document.getElementById('inputMeta').value)||0;
-  if(!nome){ showToast('⚠️ Informe o nome do vendedor'); return; }
-  if(!meta){ showToast('⚠️ Informe a meta de vendas'); return; }
-  if(editId){
-    const v=vendedores.find(x=>x.id===editId);
-    v.nome=nome; v.meta=meta; v.cor=corSelecionada;
-    showToast('✅ Vendedor atualizado!');
-  } else {
-    vendedores.push({id:uid(),nome,meta,cor:corSelecionada,vendas:[]});
-    showToast('✅ Vendedor adicionado!');
-  }
+  if(!nome){ showToast('Informe o nome'); return; }
+  if(!meta){ showToast('Informe a meta'); return; }
+  if(editId){ const v=vendedores.find(x=>x.id===editId); v.nome=nome; v.meta=meta; v.cor=corSelecionada; showToast('Atualizado'); }
+  else { vendedores.push({id:uid(),nome,meta,cor:corSelecionada,vendas:[]}); showToast('Vendedor adicionado'); }
   save(); closeModal('modalVendedor'); renderAll();
 }
-
 function deletarVendedor(id){
-  if(!confirm('Tem certeza que deseja excluir este vendedor?')) return;
+  if(!confirm('Excluir este vendedor?')) return;
   vendedores=vendedores.filter(v=>v.id!==id);
-  save(); renderAll(); showToast('🗑️ Vendedor removido');
+  save(); renderAll(); showToast('Vendedor removido');
 }
-
-// ============ MODAL VENDA ============
 function openModalVenda(id){
   vendaVendedorId=id;
   const v=vendedores.find(x=>x.id===id);
-  document.getElementById('modalVendaTitle').textContent='Vendas — '+v.nome;
+  document.getElementById('modalVendaTitle').textContent=v.nome+' — Vendas';
   document.getElementById('inputValorVenda').value='';
   document.getElementById('inputDataVenda').value=today();
   document.getElementById('inputDescVenda').value='';
   renderVendasModal(v);
   document.getElementById('modalVenda').classList.add('open');
 }
-
 function renderVendasModal(v){
   const list=document.getElementById('vendasListModal');
-  if(!v.vendas||!v.vendas.length){
-    list.innerHTML='<div style="text-align:center;color:var(--text2);padding:12px;font-size:13px">Nenhuma venda registrada</div>';
-    return;
-  }
+  if(!v.vendas||!v.vendas.length){ list.innerHTML='<div style="text-align:center;color:var(--text2);padding:10px;font-size:12px">Nenhuma venda registrada</div>'; return; }
   list.innerHTML=[...v.vendas].reverse().slice(0,20).map(vd=>`
     <div class="venda-item">
-      <span>${vd.data} ${vd.desc?'· '+vd.desc:''}</span>
+      <span style="color:var(--text2)">${vd.data}${vd.desc?' · '+vd.desc:''}</span>
       <span class="v-val">${fmt(vd.valor)}</span>
-      <button class="v-del" onclick="deletarVenda('${v.id}','${vd.id}')" title="Excluir">✕</button>
+      <button class="v-del" onclick="deletarVenda('${v.id}','${vd.id}')">✕</button>
     </div>`).join('');
 }
-
 function salvarVenda(){
   const valor=parseFloat(document.getElementById('inputValorVenda').value)||0;
   const data=document.getElementById('inputDataVenda').value||today();
   const desc=document.getElementById('inputDescVenda').value.trim();
-  if(!valor){ showToast('⚠️ Informe o valor da venda'); return; }
+  if(!valor){ showToast('Informe o valor'); return; }
   const v=vendedores.find(x=>x.id===vendaVendedorId);
   if(!v.vendas) v.vendas=[];
   v.vendas.push({id:uid(),valor,data,desc});
   save(); renderVendasModal(v); renderAll();
   document.getElementById('inputValorVenda').value='';
   document.getElementById('inputDescVenda').value='';
-  showToast('💰 Venda registrada!');
+  showToast('Venda registrada');
 }
-
 function deletarVenda(vid,vendaId){
   const v=vendedores.find(x=>x.id===vid);
   v.vendas=v.vendas.filter(vd=>vd.id!==vendaId);
-  save(); renderVendasModal(v); renderAll(); showToast('🗑️ Venda removida');
+  save(); renderVendasModal(v); renderAll(); showToast('Venda removida');
 }
 
-// ============ RENDER ============
-function renderAll(){
-  renderVendedores();
-  renderStats();
-  renderMetas();
-  renderRanking();
-}
+function renderAll(){ renderVendedores(); renderStats(); renderMetas(); renderRanking(); }
 
-const EMOJIS={verde:'🌟',azul:'💎',amarelo:'⚡',vermelho:'🔥'};
+const tagLabels={verde:'Alto Potencial',azul:'Bom Potencial',amarelo:'Em Desenvolvimento',vermelho:'Atenção'};
 
 function renderVendedores(){
   const grid=document.getElementById('vendedoresGrid');
   if(!vendedores.length){
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
-      <div class="icon">👥</div>
-      <h3>Nenhum vendedor cadastrado</h3>
-      <p>Clique em "Novo Vendedor" para começar</p>
-    </div>`;
-    return;
+      <div class="icon">👥</div><h3>Nenhum vendedor cadastrado</h3>
+      <p>Clique em "Novo Vendedor" para começar</p></div>`; return;
   }
   grid.innerHTML=vendedores.map(v=>{
-    const total=totalPeriodo(v);
-    const pct=v.meta>0?Math.min(100,Math.round(total/v.meta*100)):0;
-    const falta=Math.max(0,v.meta-total);
-    return `
-    <div class="vendedor-card">
+    const total=totalPeriodo(v), pct=v.meta>0?Math.min(100,Math.round(total/v.meta*100)):0;
+    const falta=Math.max(0,v.meta-total), nv=vendasNoPeriodo(v).length;
+    return `<div class="vendedor-card">
+      <div class="card-top top-${v.cor}"></div>
       <div class="card-header">
-        <div class="color-badge badge-${v.cor}">${EMOJIS[v.cor]}</div>
+        <div class="color-dot dot-${v.cor}"></div>
         <div class="vendedor-info">
           <div class="vendedor-name">${v.nome}</div>
-          <span class="chip chip-${v.cor}">${v.cor}</span>
+          <span class="vtag vtag-${v.cor}">${tagLabels[v.cor]}</span>
         </div>
         <div class="card-actions">
-          <button class="btn-icon btn-add-venda" onclick="openModalVenda('${v.id}')" title="Registrar venda">＋</button>
-          <button class="btn-icon btn-edit" onclick="openModal('edit','${v.id}')" title="Editar">✏️</button>
-          <button class="btn-icon btn-del" onclick="deletarVendedor('${v.id}')" title="Excluir">🗑️</button>
+          <button class="btn-icon add" onclick="openModalVenda('${v.id}')" title="Registrar venda">+</button>
+          <button class="btn-icon" onclick="openModal('edit','${v.id}')" title="Editar">✎</button>
+          <button class="btn-icon del" onclick="deletarVendedor('${v.id}')" title="Excluir">✕</button>
         </div>
       </div>
       <div class="card-body">
-        <div class="progress-wrap">
-          <div class="progress-label">
-            <span>Meta: ${fmt(v.meta)}</span>
-            <span>${pct}%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill fill-${v.cor}" style="width:${pct}%"></div>
-          </div>
-        </div>
+        <div class="progress-label"><span>Meta: ${fmt(v.meta)}</span><span>${pct}%</span></div>
+        <div class="progress-bar"><div class="progress-fill fill-${v.cor}" style="width:${pct}%"></div></div>
       </div>
       <div class="card-footer">
-        <div><span class="label" style="font-size:11px;color:var(--text2)">Realizado</span><br><span class="foot-val" style="color:var(--green)">${fmt(total)}</span></div>
-        <div style="text-align:center"><span class="label" style="font-size:11px;color:var(--text2)">Vendas</span><br><span class="foot-val">${vendasNoPeriodo(v).length}</span></div>
-        <div style="text-align:right"><span class="label" style="font-size:11px;color:var(--text2)">Falta</span><br><span class="foot-val" style="color:var(--red)">${fmt(falta)}</span></div>
+        <div class="cf-item"><div class="cf-label">Realizado</div><div class="cf-val" style="color:var(--green)">${fmt(total)}</div></div>
+        <div class="cf-item"><div class="cf-label">Vendas</div><div class="cf-val">${nv}</div></div>
+        <div class="cf-item"><div class="cf-label">Falta</div><div class="cf-val" style="color:var(--red)">${fmt(falta)}</div></div>
       </div>
     </div>`;
   }).join('');
@@ -836,76 +605,64 @@ function renderStats(){
   const total=vendedores.length;
   const bateram=vendedores.filter(v=>totalPeriodo(v)>=v.meta).length;
   const nao=vendedores.filter(v=>totalPeriodo(v)<v.meta&&vendasNoPeriodo(v).length>0).length;
-  const semVender=vendedores.filter(v=>vendasNoPeriodo(v).length===0).length;
-  const faturamento=vendedores.reduce((a,v)=>a+totalPeriodo(v),0);
+  const sem=vendedores.filter(v=>vendasNoPeriodo(v).length===0).length;
+  const fat=vendedores.reduce((a,v)=>a+totalPeriodo(v),0);
   document.getElementById('statsRow').innerHTML=`
-    <div class="stat-card s-blue"><div class="label">Total Vendedores</div><div class="value">${total}</div><div class="sub">cadastrados</div></div>
+    <div class="stat-card s-blue"><div class="label">Vendedores</div><div class="value">${total}</div><div class="sub">cadastrados</div></div>
     <div class="stat-card s-green"><div class="label">Bateram Meta</div><div class="value">${bateram}</div><div class="sub">no período</div></div>
     <div class="stat-card s-yellow"><div class="label">Abaixo da Meta</div><div class="value">${nao}</div><div class="sub">mas vendendo</div></div>
-    <div class="stat-card s-red"><div class="label">Sem Vender</div><div class="value">${semVender}</div><div class="sub">no período</div></div>
-    <div class="stat-card s-blue"><div class="label">Faturamento Total</div><div class="value" style="font-size:18px">${fmt(faturamento)}</div><div class="sub">no período</div></div>
-  `;
+    <div class="stat-card s-red"><div class="label">Sem Vender</div><div class="value">${sem}</div><div class="sub">no período</div></div>
+    <div class="stat-card s-blue"><div class="label">Faturamento Total</div><div class="value" style="font-size:17px">${fmt(fat)}</div><div class="sub">no período</div></div>`;
 }
 
-// PIZZA SVG
-function pizzaSVG(pct, cor){
-  const size=80, cx=40, cy=40, r=32, stroke=10;
-  const circ=2*Math.PI*r;
-  const dash=circ*(pct/100);
-  const cores={verde:'#22c55e',azul:'#3b82f6',amarelo:'#f59e0b',vermelho:'#ef4444'};
-  const c=cores[cor]||'#3b82f6';
-  return `<svg class="pizza-svg" width="${size}" height="${size}" viewBox="0 0 80 80">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e8e5de" stroke-width="${stroke}"/>
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="${stroke}"
-      stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${circ/4}" stroke-linecap="round"
-      style="transition:stroke-dasharray .6s ease"/>
-    <text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="14" font-weight="800" fill="#1a1a1a" font-family="Syne,sans-serif">${pct}%</text>
+function pizzaSVG(pct,cor){
+  const cx=40,cy=40,r=30,sw=8,circ=2*Math.PI*r,dash=circ*(pct/100);
+  const c={verde:'#16a34a',azul:'#2563eb',amarelo:'#d97706',vermelho:'#dc2626'}[cor]||'#2563eb';
+  return `<svg width="80" height="80" viewBox="0 0 80 80" style="flex-shrink:0">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="${sw}"/>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="${sw}"
+      stroke-dasharray="${dash} ${circ}" stroke-dashoffset="${circ/4}" stroke-linecap="round"/>
+    <text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="12" font-weight="700" fill="#111827" font-family="Inter,sans-serif">${pct}%</text>
   </svg>`;
 }
 
 function renderMetas(){
   const bateram=vendedores.filter(v=>totalPeriodo(v)>=v.meta).length;
-  const semVender=vendedores.filter(v=>vendasNoPeriodo(v).length===0).length;
-  const faturamento=vendedores.reduce((a,v)=>a+totalPeriodo(v),0);
-  const totalMeta=vendedores.reduce((a,v)=>a+(+v.meta),0);
+  const sem=vendedores.filter(v=>vendasNoPeriodo(v).length===0).length;
+  const fat=vendedores.reduce((a,v)=>a+totalPeriodo(v),0);
+  const tmeta=vendedores.reduce((a,v)=>a+(+v.meta),0);
   document.getElementById('metaStatsRow').innerHTML=`
     <div class="stat-card s-green"><div class="label">Bateram Meta</div><div class="value">${bateram}/${vendedores.length}</div></div>
-    <div class="stat-card s-red"><div class="label">Sem Vender</div><div class="value">${semVender}</div></div>
-    <div class="stat-card s-blue"><div class="label">Faturamento</div><div class="value" style="font-size:18px">${fmt(faturamento)}</div></div>
-    <div class="stat-card s-yellow"><div class="label">Meta Total Equipe</div><div class="value" style="font-size:18px">${fmt(totalMeta)}</div></div>
-  `;
-
+    <div class="stat-card s-red"><div class="label">Sem Vender</div><div class="value">${sem}</div></div>
+    <div class="stat-card s-blue"><div class="label">Faturamento</div><div class="value" style="font-size:17px">${fmt(fat)}</div></div>
+    <div class="stat-card s-yellow"><div class="label">Meta da Equipe</div><div class="value" style="font-size:17px">${fmt(tmeta)}</div></div>`;
   const grid=document.getElementById('metasGrid');
-  if(!vendedores.length){
-    grid.innerHTML='<div class="empty-state"><div class="icon">🎯</div><h3>Sem vendedores</h3></div>';
-    return;
-  }
+  if(!vendedores.length){ grid.innerHTML='<div class="empty-state"><div class="icon">🎯</div><h3>Sem vendedores</h3></div>'; return; }
+  const c={verde:'#16a34a',azul:'#2563eb',amarelo:'#d97706',vermelho:'#dc2626'};
   grid.innerHTML=vendedores.map(v=>{
-    const total=totalPeriodo(v);
-    const pct=v.meta>0?Math.min(100,Math.round(total/v.meta*100)):0;
-    const falta=Math.max(0,v.meta-total);
-    const nVendas=vendasNoPeriodo(v).length;
-    return `
-    <div class="meta-card">
+    const total=totalPeriodo(v), pct=v.meta>0?Math.min(100,Math.round(total/v.meta*100)):0;
+    const falta=Math.max(0,v.meta-total), nv=vendasNoPeriodo(v).length;
+    return `<div class="meta-card">
       <div class="meta-header">
-        <div class="color-badge badge-${v.cor}" style="width:40px;height:40px;font-size:16px">${EMOJIS[v.cor]}</div>
-        <div class="meta-info">
+        <div style="width:3px;height:32px;background:${c[v.cor]};border-radius:2px;flex-shrink:0"></div>
+        <div style="flex:1">
           <div class="meta-name">${v.nome}</div>
-          <div class="meta-periodo"><span class="chip chip-${v.cor}">${v.cor}</span></div>
+          <span class="vtag vtag-${v.cor}" style="margin-top:3px;display:inline-block">${v.cor}</span>
         </div>
+        <span style="font-size:11px;color:var(--text2)">${nv} venda${nv!==1?'s':''}</span>
       </div>
       <div class="pizza-wrap">
         ${pizzaSVG(pct,v.cor)}
         <div class="pizza-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:${pct>=100?'#22c55e':'#3b82f6'}"></div><span>Realizado</span><span class="legend-val" style="color:#3b82f6">${fmt(total)}</span></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#e8e5de"></div><span>Falta</span><span class="legend-val" style="color:#ef4444">${fmt(falta)}</span></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><span>Meta</span><span class="legend-val">${fmt(v.meta)}</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:${c[v.cor]}"></div><span>Realizado</span><span class="legend-val" style="color:${c[v.cor]}">${fmt(total)}</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#e5e7eb"></div><span>Falta</span><span class="legend-val" style="color:var(--red)">${fmt(falta)}</span></div>
+          <div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div><span>Meta</span><span class="legend-val">${fmt(v.meta)}</span></div>
         </div>
       </div>
       <div class="meta-footer-stats">
-        <div class="mfs"><div class="v">${nVendas}</div><div class="l">Vendas</div></div>
-        <div class="mfs"><div class="v" style="color:${pct>=100?'#22c55e':'#ef4444'}">${pct}%</div><div class="l">da Meta</div></div>
-        <div class="mfs"><div class="v" style="color:${pct>=100?'#22c55e':'#ef4444'}">${pct>=100?'✅':'⏳'}</div><div class="l">${pct>=100?'Bateu':'Pendente'}</div></div>
+        <div class="mfs"><div class="v">${nv}</div><div class="l">Vendas</div></div>
+        <div class="mfs"><div class="v" style="color:${pct>=100?'var(--green)':'var(--red)'}">${pct}%</div><div class="l">da Meta</div></div>
+        <div class="mfs"><div class="v" style="color:${pct>=100?'var(--green)':'var(--yellow)'}">${pct>=100?'✓':'—'}</div><div class="l">${pct>=100?'Atingiu':'Pendente'}</div></div>
       </div>
     </div>`;
   }).join('');
@@ -913,58 +670,40 @@ function renderMetas(){
 
 function renderRanking(){
   const wrap=document.getElementById('rankingWrap');
-  if(!vendedores.length){
-    wrap.innerHTML='<div class="empty-state"><div class="icon">🏆</div><h3>Sem dados ainda</h3></div>';
-    return;
-  }
-  const sorted=[...vendedores].map(v=>({...v,_total:totalPeriodo(v),_nv:vendasNoPeriodo(v).length}))
-    .sort((a,b)=>b._total-a._total);
-  const top3=sorted.slice(0,3);
-  const rest=sorted.slice(3);
-  const crowns=['👑','🥈','🥉'];
-  const podiumOrder=top3.length>=3?[1,0,2]:[0,1,2]; // 2nd,1st,3rd visual order
-
-  let podiumHTML='<div class="rank-top3">';
-  if(top3.length===0){podiumHTML+='</div>';} else {
-    // Reorder visually: 2nd left, 1st center, 3rd right
-    const display=top3.length===1?[0]:top3.length===2?[1,0]:[1,0,2];
-    display.forEach(i=>{
-      if(!top3[i]){podiumHTML+='<div></div>';return;}
-      const v=top3[i];
-      podiumHTML+=`<div class="rank-podium pos${i+1}">
-        <span class="rank-crown">${crowns[i]}</span>
-        <div class="rank-num">${i+1}º lugar</div>
-        <div class="rank-name">${v.nome}</div>
-        <div class="rank-val">${fmt(v._total)}</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:4px">${v._nv} venda${v._nv!==1?'s':''}</div>
-        <span class="chip chip-${v.cor}" style="margin-top:6px">${v.cor}</span>
-      </div>`;
-    });
-    podiumHTML+='</div>';
-  }
-
-  let tableHTML='';
-  if(rest.length){
-    tableHTML=`<div class="rank-table">${rest.map((v,i)=>`
-      <div class="rank-row">
-        <div class="rank-pos">${i+4}º</div>
-        <div class="rank-name-col">${v.nome} <span class="chip chip-${v.cor}">${v.cor}</span></div>
-        <div class="rank-vendas-col">${v._nv} vendas</div>
-        <div class="rank-val-col">${fmt(v._total)}</div>
-      </div>`).join('')}</div>`;
-  }
-
-  wrap.innerHTML=podiumHTML+tableHTML;
+  if(!vendedores.length){ wrap.innerHTML='<div class="empty-state"><div class="icon">🏆</div><h3>Sem dados</h3></div>'; return; }
+  const sorted=[...vendedores].map(v=>({...v,_t:totalPeriodo(v),_nv:vendasNoPeriodo(v).length})).sort((a,b)=>b._t-a._t);
+  const top3=sorted.slice(0,3), rest=sorted.slice(3);
+  const medals=['🥇','🥈','🥉'];
+  const display=top3.length===1?[0]:top3.length===2?[1,0]:[1,0,2];
+  let pod='<div class="rank-top3">';
+  display.forEach(i=>{
+    if(!top3[i]){pod+='<div></div>';return;}
+    const v=top3[i];
+    pod+=`<div class="rank-podium pos${i+1}">
+      <span class="rank-medal">${medals[i]}</span>
+      <div class="rank-pos-label">${i+1}º lugar</div>
+      <div class="rank-name">${v.nome}</div>
+      <div class="rank-val">${fmt(v._t)}</div>
+      <div class="rank-sub">${v._nv} venda${v._nv!==1?'s':''}</div>
+      <span class="vtag vtag-${v.cor}" style="margin-top:6px;display:inline-block">${v.cor}</span>
+    </div>`;
+  });
+  pod+='</div>';
+  const table=rest.length?`<div class="rank-table">${rest.map((v,i)=>`
+    <div class="rank-row">
+      <div class="rank-pos">${i+4}º</div>
+      <div class="rank-name-col">${v.nome} <span class="vtag vtag-${v.cor}">${v.cor}</span></div>
+      <div class="rank-vendas-col">${v._nv} vendas</div>
+      <div class="rank-val-col">${fmt(v._t)}</div>
+    </div>`).join('')}</div>`:'';
+  wrap.innerHTML=pod+table;
 }
 
-// ============ INIT ============
 document.getElementById('filtroData').value=today();
 document.getElementById('filtroDataRank').value=today();
 renderAll();
-
-// Fechar modal clicando fora
 document.querySelectorAll('.modal-overlay').forEach(o=>{
-  o.addEventListener('click',e=>{if(e.target===o) o.classList.remove('open');});
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
 });
 </script>
 </body>
