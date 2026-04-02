@@ -195,7 +195,16 @@
   .mfs .v { font-size:15px; font-weight:700; }
   .mfs .l { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; color:var(--text2); margin-top:2px; }
 
-  .ranking-wrap { max-width:680px; }
+  /* ===== RANKING CENTRALIZADO ===== */
+  .ranking-page-inner {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  .ranking-wrap {
+    width:100%;
+    max-width:720px;
+  }
   .rank-top3 { display:grid; grid-template-columns:1fr 1.08fr 1fr; gap:10px; margin-bottom:14px; align-items:end; }
   .rank-podium {
     background:#fff; border-radius:var(--radius);
@@ -344,6 +353,7 @@
     <div class="metas-grid" id="metasGrid"></div>
   </div>
 
+  <!-- RANKING CENTRALIZADO -->
   <div class="page" id="page-ranking">
     <div class="filter-row">
       <div class="filter-tabs">
@@ -354,7 +364,9 @@
       <input type="date" class="filter-input" id="filtroDataRank" onchange="renderAll()">
     </div>
     <div class="sec-title">Ranking de Faturamento</div>
-    <div class="ranking-wrap" id="rankingWrap"></div>
+    <div class="ranking-page-inner">
+      <div class="ranking-wrap" id="rankingWrap"></div>
+    </div>
   </div>
 
 </main>
