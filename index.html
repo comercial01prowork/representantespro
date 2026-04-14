@@ -196,16 +196,14 @@
   .status-selector { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .status-opt { padding:8px 6px; border-radius:6px; border:1.5px solid var(--border); cursor:pointer; text-align:center; font-size:11px; font-weight:600; transition:all .15s; }
   .status-opt.sel-prospeccao { border-color:#7c3aed; background:#f5f3ff; color:#7c3aed; }
-  .status-opt.sel-negociando { border-color:#d97706; background:#fffbeb; color:#d97706; }
-  .status-opt.sel-fechou { border-color:#16a34a; background:#f0fdf4; color:#16a34a; }
-  .status-opt.sel-inativo { border-color:#6b7280; background:#f9fafb; color:#6b7280; }
+  .status-opt.sel-ativo { border-color:#16a34a; background:#f0fdf4; color:#16a34a; }
+  .status-opt.sel-inativo { border-color:#dc2626; background:#fef2f2; color:#dc2626; }
   .pendencias-check { display:flex; flex-direction:column; gap:8px; }
   .check-item { display:flex; align-items:center; gap:8px; font-size:13px; cursor:pointer; }
   .check-item input[type=checkbox] { width:16px; height:16px; cursor:pointer; }
   .col-prospeccao .kanban-col-header { border-top:3px solid #7c3aed; }
-  .col-negociando .kanban-col-header { border-top:3px solid #d97706; }
-  .col-fechou .kanban-col-header { border-top:3px solid #16a34a; }
-  .col-inativo .kanban-col-header { border-top:3px solid #9ca3af; }
+  .col-ativo .kanban-col-header { border-top:3px solid #16a34a; }
+  .col-inativo .kanban-col-header { border-top:3px solid #dc2626; }
   .rep-summary-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
   .rep-summary-item { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px 16px; display:flex; align-items:center; gap:10px; font-size:13px; }
   .rep-summary-num { font-size:20px; font-weight:700; }
@@ -328,9 +326,8 @@
         </div>
         <select class="filter-select" id="filtroStatusRep" onchange="renderRepTotal()">
           <option value="">Todos os status</option>
-          <option value="prospeccao">Prospecção</option>
-          <option value="negociando">Negociando</option>
-          <option value="fechou">Fechou</option>
+          <option value="prospeccao">Prospectando</option>
+          <option value="ativo">Ativo</option>
           <option value="inativo">Inativo</option>
         </select>
         <button class="btn-primary purple" onclick="openModalRepTotal('add')">+ Novo Representante</button>
@@ -417,12 +414,15 @@
     </div>
     <div class="form-group">
       <label class="form-label">Status</label>
-      <div class="status-selector">
-        <div class="status-opt" data-s="prospeccao" onclick="selectStatusRep('prospeccao')">🔍 Prospecção</div>
-        <div class="status-opt" data-s="negociando" onclick="selectStatusRep('negociando')">🤝 Negociando</div>
-        <div class="status-opt" data-s="fechou" onclick="selectStatusRep('fechou')">✅ Fechou</div>
+      <div class="status-selector" style="grid-template-columns:1fr 1fr 1fr">
+        <div class="status-opt" data-s="prospeccao" onclick="selectStatusRep('prospeccao')">🔍 Prospectando</div>
+        <div class="status-opt" data-s="ativo" onclick="selectStatusRep('ativo')">✅ Ativo</div>
         <div class="status-opt" data-s="inativo" onclick="selectStatusRep('inativo')">⛔ Inativo</div>
       </div>
+    </div>
+    <div class="form-group" id="grupoMalaVoltar" style="display:none">
+      <label class="form-label">Mala a devolver?</label>
+      <label class="check-item"><input type="checkbox" id="rtMalaVoltar"> Inativou mas tem mala para devolver</label>
     </div>
     <div class="form-group">
       <label class="form-label">Pendências</label>
@@ -734,6 +734,7 @@ function openModalRepTotal(mode, id=null){
     document.getElementById('rtAcesso').checked = r.faltaAcesso||false;
     document.getElementById('rtMala').checked = r.faltaMala||false;
     document.getElementById('rtTreinamento').checked = r.faltaTreinamento||false;
+    if(document.getElementById('rtMalaVoltar')) document.getElementById('rtMalaVoltar').checked = r.malaVoltar||false;
     statusRepSelecionado = r.status||'prospeccao';
     selectStatusRep(r.status||'prospeccao');
     ufRepSelecionada = r.uf||'';
@@ -744,6 +745,7 @@ function openModalRepTotal(mode, id=null){
     document.getElementById('rtAcesso').checked=false;
     document.getElementById('rtMala').checked=false;
     document.getElementById('rtTreinamento').checked=false;
+    if(document.getElementById('rtMalaVoltar')) document.getElementById('rtMalaVoltar').checked=false;
     statusRepSelecionado='prospeccao';
     selectStatusRep('prospeccao');
     ufRepSelecionada='';
@@ -757,6 +759,8 @@ function selectStatusRep(s){
     el.className='status-opt';
     if(el.dataset.s===s) el.classList.add('sel-'+s);
   });
+  const grupoMala=document.getElementById('grupoMalaVoltar');
+  if(grupoMala) grupoMala.style.display=(s==='inativo')?'block':'none';
 }
 function salvarRepTotal(){
   const nome = document.getElementById('rtNome').value.trim();
@@ -769,6 +773,7 @@ function salvarRepTotal(){
     faltaAcesso: document.getElementById('rtAcesso').checked,
     faltaMala: document.getElementById('rtMala').checked,
     faltaTreinamento: document.getElementById('rtTreinamento').checked,
+    malaVoltar: statusRepSelecionado==='inativo'?(document.getElementById('rtMalaVoltar')?.checked||false):false,
     criadoEm: today()
   };
   if(editRepId){
@@ -1054,10 +1059,9 @@ function renderPizzaEstados(dados,fatTotal){
 // RENDER REPRESENTANTES TOTAIS
 // ══════════════════════════════════════════════════════════════
 const statusConfig = {
-  prospeccao: { label:'Prospecção', icon:'🔍', cor:'#7c3aed', bg:'#f5f3ff', countBg:'#ede9fe', countColor:'#7c3aed' },
-  negociando: { label:'Negociando', icon:'🤝', cor:'#d97706', bg:'#fffbeb', countBg:'#fef3c7', countColor:'#d97706' },
-  fechou:     { label:'Fechou', icon:'✅', cor:'#16a34a', bg:'#f0fdf4', countBg:'#dcfce7', countColor:'#16a34a' },
-  inativo:    { label:'Inativo', icon:'⛔', cor:'#9ca3af', bg:'#f9fafb', countBg:'#f3f4f6', countColor:'#6b7280' }
+  prospeccao: { label:'Prospectando', icon:'🔍', cor:'#7c3aed', bg:'#f5f3ff', countBg:'#ede9fe', countColor:'#7c3aed' },
+  ativo:      { label:'Ativo',         icon:'✅', cor:'#16a34a', bg:'#f0fdf4', countBg:'#dcfce7', countColor:'#16a34a' },
+  inativo:    { label:'Inativo',       icon:'⛔', cor:'#dc2626', bg:'#fef2f2', countBg:'#fee2e2', countColor:'#dc2626' }
 };
 
 function renderRepTotal(){
@@ -1068,57 +1072,56 @@ function renderRepTotal(){
   if(busca) lista = lista.filter(r=>r.nome.toLowerCase().includes(busca));
   if(filtroStatus) lista = lista.filter(r=>r.status===filtroStatus);
 
-  // Summary bar
-  const total = representantes.length;
-  const ativos = representantes.filter(r=>r.status==='fechou').length;
-  const prospeccao = representantes.filter(r=>r.status==='prospeccao').length;
-  const semAcesso = representantes.filter(r=>r.faltaAcesso).length;
-  const semMala = representantes.filter(r=>r.faltaMala).length;
-  const semTreinamento = representantes.filter(r=>r.faltaTreinamento).length;
+  // Summary bar — só: ativos, prospectando, malas a voltar, falta mala, falta acesso
+  const ativos       = representantes.filter(r=>r.status==='ativo').length;
+  const prospectando = representantes.filter(r=>r.status==='prospeccao').length;
+  const malaVoltar   = representantes.filter(r=>r.status==='inativo'&&r.malaVoltar).length;
+  const faltaMala    = representantes.filter(r=>r.faltaMala).length;
+  const faltaAcesso  = representantes.filter(r=>r.faltaAcesso).length;
 
   document.getElementById('repSummaryBar').innerHTML=`
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--purple)">${total}</span><span style="color:var(--text2)">Total cadastrados</span></div>
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--green)">${ativos}</span><span style="color:var(--text2)">Efetivados</span></div>
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--purple)">${prospeccao}</span><span style="color:var(--text2)">Em prospecção</span></div>
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${semAcesso}</span><span style="color:var(--text2)">Falta acesso</span></div>
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--yellow)">${semMala}</span><span style="color:var(--text2)">Falta mala</span></div>
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--blue)">${semTreinamento}</span><span style="color:var(--text2)">Falta treinamento</span></div>
+    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--green)">${ativos}</span><span style="color:var(--text2)">Ativos</span></div>
+    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--purple)">${prospectando}</span><span style="color:var(--text2)">Prospectando</span></div>
+    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${malaVoltar}</span><span style="color:var(--text2)">Malas a voltar</span></div>
+    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--yellow)">${faltaMala}</span><span style="color:var(--text2)">Falta mala</span></div>
+    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${faltaAcesso}</span><span style="color:var(--text2)">Falta acesso</span></div>
   `;
 
-  // Kanban
+  // Kanban — 3 colunas: Prospectando, Ativo, Inativo
   const board = document.getElementById('kanbanBoard');
   const cols = Object.entries(statusConfig).map(([key, cfg])=>{
     const cards = lista.filter(r=>r.status===key);
     const allOfStatus = representantes.filter(r=>r.status===key);
+    const cardsHtml = cards.length===0
+      ? `<div style="text-align:center;padding:16px;font-size:12px;color:var(--text2)">Nenhum representante</div>`
+      : cards.map(r=>{
+          const tags = [];
+          if(r.faltaAcesso)    tags.push(`<span class="rep-tag tag-acesso">⚠ Acesso</span>`);
+          if(r.faltaMala)      tags.push(`<span class="rep-tag tag-mala">📦 Mala</span>`);
+          if(r.faltaTreinamento) tags.push(`<span class="rep-tag tag-treinamento">📚 Treinamento</span>`);
+          if(r.malaVoltar && key==='inativo') tags.push(`<span class="rep-tag" style="background:#fee2e2;color:#dc2626">📦 Mala a devolver</span>`);
+          if(!r.faltaAcesso&&!r.faltaMala&&!r.faltaTreinamento&&!r.malaVoltar) tags.push(`<span class="rep-tag tag-ok">✓ Sem pendências</span>`);
+          return `<div class="rep-card" style="border-left:3px solid ${cfg.cor}">
+            <div class="rep-card-top">
+              <div class="rep-card-name" style="color:${cfg.cor}">${r.nome}</div>
+              ${r.uf?`<span class="rep-card-uf">${r.uf}</span>`:''}
+            </div>
+            ${r.obs?`<div class="rep-card-obs">${r.obs}</div>`:''}
+            <div class="rep-card-tags">${tags.join('')}</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:6px">Cadastrado: ${r.criadoEm||'—'}</div>
+            <div class="rep-card-actions">
+              <button class="btn-icon" onclick="openModalRepTotal('edit','${r.id}')" title="Editar">✎</button>
+              <button class="btn-icon del" onclick="deletarRepTotal('${r.id}')" title="Excluir">✕</button>
+            </div>
+          </div>`;
+        }).join('');
+
     return `<div class="kanban-col col-${key}">
       <div class="kanban-col-header" style="background:${cfg.bg}">
         <div class="kanban-col-title" style="color:${cfg.cor}">${cfg.icon} ${cfg.label}</div>
         <span class="kanban-count" style="background:${cfg.countBg};color:${cfg.countColor}">${allOfStatus.length}</span>
       </div>
-      <div class="kanban-col-body">
-        ${cards.length===0?`<div style="text-align:center;padding:16px;font-size:12px;color:var(--text2)">${busca||filtroStatus?'Sem resultados':'Nenhum representante</div>'}`:
-          cards.map(r=>{
-            const tags = [];
-            if(r.faltaAcesso) tags.push(`<span class="rep-tag tag-acesso">⚠ Acesso</span>`);
-            if(r.faltaMala) tags.push(`<span class="rep-tag tag-mala">📦 Mala</span>`);
-            if(r.faltaTreinamento) tags.push(`<span class="rep-tag tag-treinamento">📚 Treinamento</span>`);
-            if(!r.faltaAcesso&&!r.faltaMala&&!r.faltaTreinamento) tags.push(`<span class="rep-tag tag-ok">✓ Sem pendências</span>`);
-            return `<div class="rep-card">
-              <div class="rep-card-top">
-                <div class="rep-card-name">${r.nome}</div>
-                ${r.uf?`<span class="rep-card-uf">${r.uf}</span>`:''}
-              </div>
-              ${r.obs?`<div class="rep-card-obs">${r.obs}</div>`:''}
-              <div class="rep-card-tags">${tags.join('')}</div>
-              <div style="font-size:10px;color:var(--text2);margin-bottom:6px">Cadastrado: ${r.criadoEm||'—'}</div>
-              <div class="rep-card-actions">
-                <button class="btn-icon" onclick="openModalRepTotal('edit','${r.id}')" title="Editar">✎</button>
-                <button class="btn-icon del" onclick="deletarRepTotal('${r.id}')" title="Excluir">✕</button>
-              </div>
-            </div>`;
-          }).join('')
-        }
-      </div>
+      <div class="kanban-col-body">${cardsHtml}</div>
     </div>`;
   });
   board.innerHTML = cols.join('');
