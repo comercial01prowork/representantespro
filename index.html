@@ -727,20 +727,23 @@ function detectarColunas(headerRow) {
 }
 
 function excelDataParaISO(val) {
-  if (!val) return today();
-  // Se já é string tipo "2026-04-17" ou "17/04/2026"
+  if (!val && val !== 0) return today();
+  // Date object (cellDates:true)
+  if (val instanceof Date) {
+    const y = val.getFullYear(), m = String(val.getMonth()+1).padStart(2,'0'), d = String(val.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+  // Número serial do Excel (raw:true sem cellDates)
+  if (typeof val === 'number') {
+    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
+    return d.toISOString().slice(0,10);
+  }
+  // String "17/04/2026"
   if (typeof val === 'string') {
     const parts = val.split('/');
     if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
     return val.slice(0,10);
   }
-  // Se é número serial do Excel (dias desde 1/1/1900)
-  if (typeof val === 'number') {
-    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
-    return d.toISOString().slice(0,10);
-  }
-  // Se é Date
-  if (val instanceof Date) return val.toISOString().slice(0,10);
   return today();
 }
 
@@ -809,17 +812,18 @@ function iniciarImport(input) {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array', cellDates: true });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
+      // raw:true → números chegam como number, datas como Date (por causa de cellDates:true)
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: '' });
 
       if (!rows || rows.length < 2) {
         showToast('Planilha vazia ou sem dados');
         return;
       }
 
-      // Detectar linha de cabeçalho (primeira linha não-vazia)
+      // Detectar linha de cabeçalho: primeira linha que tenha pelo menos 3 células preenchidas
       let headerIdx = 0;
-      while (headerIdx < rows.length && rows[headerIdx].every(c => !c)) headerIdx++;
-      
+      while (headerIdx < rows.length && rows[headerIdx].filter(c => String(c||'').trim()).length < 3) headerIdx++;
+
       const colMap = detectarColunas(rows[headerIdx]);
 
       if (colMap.valor === undefined || colMap.vendedor === undefined) {
