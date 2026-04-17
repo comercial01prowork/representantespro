@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sistema Comercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- SheetJS para leitura de Excel no browser -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --bg: #f0f2f5; --surface: #ffffff; --surface2: #f7f8fa; --border: #e2e5ea;
@@ -70,6 +72,8 @@
   .btn-primary:hover{background:#1d4ed8;}
   .btn-primary.purple{background:var(--purple);}
   .btn-primary.purple:hover{background:#6d28d9;}
+  .btn-primary.green{background:var(--green);}
+  .btn-primary.green:hover{background:#15803d;}
   .btn-secondary { background:#fff; color:var(--text); border:1px solid var(--border); border-radius:6px; padding:7px 16px; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; cursor:pointer; }
   .btn-secondary:hover{background:#f1f5f9;}
   .filter-row { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
@@ -208,6 +212,60 @@
   .rep-summary-item { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px 16px; display:flex; align-items:center; gap:10px; font-size:13px; }
   .rep-summary-num { font-size:20px; font-weight:700; }
 
+  /* === IMPORTAÇÃO EXCEL === */
+  .import-banner {
+    background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .import-banner-icon { font-size: 28px; flex-shrink: 0; }
+  .import-banner-text { flex: 1; min-width: 200px; }
+  .import-banner-text h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .import-banner-text p { font-size: 12px; color: var(--text2); }
+  .import-banner-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn-import { background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .15s; position: relative; overflow: hidden; }
+  .btn-import:hover { background: #15803d; }
+  .btn-import input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  /* Modal Importação */
+  .modal.modal-wide { max-width: 700px; }
+  .import-preview-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px; }
+  .import-preview-table th { background: var(--surface2); padding: 7px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--text2); border-bottom: 2px solid var(--border); }
+  .import-preview-table td { padding: 6px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .import-preview-table tr:hover td { background: var(--surface2); }
+  .import-preview-table tr.dup td { background: #fffbeb; color: #92400e; }
+  .import-preview-table tr.novo td { background: var(--green-light); }
+  .import-stats-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .import-stat { padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+  .import-stat.is-total { background: var(--blue-light); color: var(--blue); }
+  .import-stat.is-novo { background: var(--green-light); color: var(--green); }
+  .import-stat.is-dup { background: var(--yellow-light); color: var(--yellow); }
+  .import-stat.is-sem-vendedor { background: var(--red-light); color: var(--red); }
+  .import-scroll { max-height: 320px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+  .import-vendedor-match { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; margin-bottom: 8px; }
+  .ivm-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .ivm-nome { font-size: 13px; font-weight: 600; flex: 1; }
+  .ivm-count { font-size: 11px; color: var(--text2); }
+  .ivm-select { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 5px; font-size: 12px; font-family: 'Inter', sans-serif; }
+  .ivm-select:focus { outline: none; border-color: var(--blue); }
+  .ivm-status { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
+  .ivm-ok { background: var(--green-light); color: var(--green); }
+  .ivm-novo { background: var(--blue-light); color: var(--blue); }
+  .ivm-ignorar { background: var(--red-light); color: var(--red); }
+  .import-step { display: none; }
+  .import-step.active { display: block; }
+  .step-nav { display: flex; gap: 0; margin-bottom: 20px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .step-item { flex: 1; padding: 8px 12px; text-align: center; font-size: 11px; font-weight: 600; background: #fff; color: var(--text2); border-right: 1px solid var(--border); }
+  .step-item:last-child { border-right: none; }
+  .step-item.active { background: var(--blue); color: #fff; }
+  .step-item.done { background: var(--green-light); color: var(--green); }
+
   @media(max-width:600px){main{padding:14px;}header{padding:0 14px;}.rank-top3{grid-template-columns:1fr;}.logo-upload-btn{width:160px;}.uf-grid{grid-template-columns:repeat(5,1fr);}}
 </style>
 </head>
@@ -234,6 +292,23 @@
 <main>
   <!-- VENDEDORES -->
   <div class="page active" id="page-vendedores">
+
+    <!-- BANNER IMPORTAÇÃO -->
+    <div class="import-banner">
+      <div class="import-banner-icon">📊</div>
+      <div class="import-banner-text">
+        <h3>Importar Pedidos via Excel</h3>
+        <p>Suba sua planilha com colunas: <strong>Número, Cliente, Dt. Venda, Valor, Vendedor</strong> — os pedidos serão vinculados automaticamente aos vendedores cadastrados.</p>
+      </div>
+      <div class="import-banner-actions">
+        <label class="btn-import">
+          📂 Importar Excel
+          <input type="file" accept=".xlsx,.xls,.csv" onchange="iniciarImport(this)">
+        </label>
+        <button class="btn-secondary" onclick="baixarModeloExcel()" title="Baixar planilha modelo">⬇ Modelo</button>
+      </div>
+    </div>
+
     <div class="stats-row" id="statsRow"></div>
     <div class="cores-legenda">
       <div class="cl-item"><div class="cl-dot" style="background:#16a34a"></div>Verde — Alto Potencial</div>
@@ -333,9 +408,7 @@
         <button class="btn-primary purple" onclick="openModalRepTotal('add')">+ Novo Representante</button>
       </div>
     </div>
-
     <div class="rep-summary-bar" id="repSummaryBar"></div>
-
     <div class="sec-title">Kanban de Status</div>
     <div class="kanban-board" id="kanbanBoard"></div>
   </div>
@@ -443,11 +516,88 @@
   </div>
 </div>
 
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL IMPORTAÇÃO EXCEL                                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalImport">
+  <div class="modal modal-wide">
+    <div class="modal-title">📊 Importar Pedidos do Excel</div>
+
+    <!-- Steps nav -->
+    <div class="step-nav" id="stepNav">
+      <div class="step-item active" id="sn1">1. Prévia</div>
+      <div class="step-item" id="sn2">2. Vincular Vendedores</div>
+      <div class="step-item" id="sn3">3. Confirmar</div>
+    </div>
+
+    <!-- STEP 1: Prévia dos dados -->
+    <div class="import-step active" id="importStep1">
+      <div class="import-stats-row" id="importStatsRow"></div>
+      <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Prévia dos dados (primeiras 10 linhas)</div>
+      <div class="import-scroll">
+        <table class="import-preview-table" id="importPreviewTable">
+          <thead>
+            <tr>
+              <th>Nº Pedido</th>
+              <th>Cliente</th>
+              <th>Data</th>
+              <th>Valor</th>
+              <th>Vendedor (planilha)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="importPreviewBody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:11px;color:var(--text2);margin-top:8px">
+        🟢 Verde = pedido novo &nbsp;|&nbsp; 🟡 Amarelo = já importado (mesmo nº de pedido) &nbsp;|&nbsp; ⬜ Branco = sem correspondência de vendedor
+      </div>
+      <div class="modal-actions" style="margin-top:16px">
+        <button class="btn-secondary" onclick="closeModal('modalImport')">Cancelar</button>
+        <button class="btn-primary" onclick="irParaStep(2)" id="btnStep2" disabled>Próximo →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Vincular vendedores da planilha com os cadastrados -->
+    <div class="import-step" id="importStep2">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">
+        Associe cada nome da planilha com um vendedor cadastrado no sistema (ou crie um novo automaticamente).
+      </div>
+      <div id="importVendedoresMatch"></div>
+      <div class="modal-actions" style="margin-top:16px">
+        <button class="btn-secondary" onclick="irParaStep(1)">← Voltar</button>
+        <button class="btn-primary" onclick="irParaStep(3)">Próximo →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Confirmar importação -->
+    <div class="import-step" id="importStep3">
+      <div class="import-stats-row" id="importConfirmStats"></div>
+      <div id="importResumoVendedores" style="margin-bottom:14px"></div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Ao confirmar, os pedidos serão adicionados às vendas dos vendedores correspondentes.</div>
+      <div id="importOpcoes" style="margin-bottom:14px">
+        <label class="check-item" style="margin-bottom:8px">
+          <input type="checkbox" id="importSubstituir"> 
+          <span>Substituir pedidos duplicados (mesmo número)</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" id="importCriarNovos" checked>
+          <span>Criar novos vendedores automaticamente para nomes sem correspondência</span>
+        </label>
+      </div>
+      <div class="modal-actions" style="margin-top:16px">
+        <button class="btn-secondary" onclick="irParaStep(2)">← Voltar</button>
+        <button class="btn-primary green" onclick="confirmarImport()">✅ Confirmar Importação</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 // ══════════════════════════════════════════════════════════════
-// CONFIGURAÇÃO — cole aqui sua URL do Apps Script
+// CONFIGURAÇÃO
 // ══════════════════════════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbwiMB6FkftJLjVW4ItFlEMCKsmBLmkf3VQHFEbpqqBo2yxjySPP2UtpO7AfmwIhRoWWYg/exec';
 
@@ -479,8 +629,13 @@ let editRepId = null;
 let statusRepSelecionado = 'prospeccao';
 let ufRepSelecionada = '';
 
+// Estado da importação
+let importDados = [];        // linhas lidas do Excel
+let importVinculo = {};      // { nomeNaPlanilha: vendedorId | 'NOVO' | 'IGNORAR' }
+let importStep = 1;
+
 // ══════════════════════════════════════════════════════════════
-// SYNC — versão corrigida para Apps Script público
+// SYNC
 // ══════════════════════════════════════════════════════════════
 function setSyncStatus(s, msg) {
   const ind=document.getElementById('syncIndicator'), dot=document.getElementById('syncDot'), txt=document.getElementById('syncText');
@@ -488,61 +643,30 @@ function setSyncStatus(s, msg) {
   dot.className='sync-dot'+(s==='syncing'?' spin':''); 
   txt.textContent=msg;
 }
-
 async function syncSave() {
   setSyncStatus('syncing','Salvando...');
   try {
-    // Apps Script com redirect — usa mode no-cors como fallback ou envia via form
     const payload = JSON.stringify({action:'save', data:vendedores, representantes:representantes});
-    const r = await fetch(API_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'text/plain'},
-      body: payload
-    });
+    const r = await fetch(API_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:payload });
     const text = await r.text();
-    let j;
-    try { j = JSON.parse(text); } catch(e) { j = {ok:false}; }
-    if(j && j.ok){
-      setSyncStatus('ok','Salvo ✓');
-      setTimeout(()=>setSyncStatus('','Sincronizado'),2500);
-    } else {
-      setSyncStatus('erro','Erro ao salvar');
-    }
-  } catch(e) {
-    setSyncStatus('erro','Sem conexão');
-  }
+    let j; try { j = JSON.parse(text); } catch(e) { j = {ok:false}; }
+    if(j && j.ok){ setSyncStatus('ok','Salvo ✓'); setTimeout(()=>setSyncStatus('','Sincronizado'),2500); }
+    else { setSyncStatus('erro','Erro ao salvar'); }
+  } catch(e) { setSyncStatus('erro','Sem conexão'); }
 }
-
 async function syncLoad() {
   setSyncStatus('syncing','Carregando...');
   try {
-    // Fetch com redirect:follow para seguir o redirect do Apps Script
-    const r = await fetch(API_URL + '?action=load', {
-      method: 'GET',
-      redirect: 'follow'
-    });
+    const r = await fetch(API_URL + '?action=load', { method:'GET', redirect:'follow' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const text = await r.text();
-    let j;
-    try { j = JSON.parse(text); } catch(e) { throw new Error('JSON inválido'); }
+    let j; try { j = JSON.parse(text); } catch(e) { throw new Error('JSON inválido'); }
     if(j && j.ok) {
-      if(j.data && j.data.length > 0) {
-        vendedores = j.data;
-        localStorage.setItem('vh_vendedores', JSON.stringify(vendedores));
-      }
-      if(j.representantes && j.representantes.length > 0) {
-        representantes = j.representantes;
-        localStorage.setItem('vh_representantes', JSON.stringify(representantes));
-      }
-      setSyncStatus('ok','Conectado ✓');
-      setTimeout(()=>setSyncStatus('','Sincronizado'),2500);
-    } else {
-      throw new Error('Resposta sem ok');
-    }
-  } catch(e) {
-    console.warn('syncLoad erro:', e.message);
-    setSyncStatus('erro','Usando cache local — verifique o Apps Script');
-  }
+      if(j.data && j.data.length > 0) { vendedores = j.data; localStorage.setItem('vh_vendedores', JSON.stringify(vendedores)); }
+      if(j.representantes && j.representantes.length > 0) { representantes = j.representantes; localStorage.setItem('vh_representantes', JSON.stringify(representantes)); }
+      setSyncStatus('ok','Conectado ✓'); setTimeout(()=>setSyncStatus('','Sincronizado'),2500);
+    } else { throw new Error('Resposta sem ok'); }
+  } catch(e) { console.warn('syncLoad erro:', e.message); setSyncStatus('erro','Usando cache local'); }
   renderAll();
 }
 
@@ -575,6 +699,353 @@ function getDateRange(){
 }
 function vendasNoPeriodo(v){const[s,e]=getDateRange();return(v.vendas||[]).filter(vd=>vd.data>=s&&vd.data<=e);}
 function totalPeriodo(v){return vendasNoPeriodo(v).reduce((a,b)=>a+(+b.valor),0);}
+
+// ══════════════════════════════════════════════════════════════
+// IMPORTAÇÃO EXCEL
+// ══════════════════════════════════════════════════════════════
+
+// Nomes de coluna aceitos (case-insensitive)
+const COL_NUMERO   = ['número','numero','nº','n°','pedido','num','número do pedido'];
+const COL_CLIENTE  = ['cliente','razão social','razao social','nome cliente','empresa'];
+const COL_DATA     = ['dt. venda','dt venda','data venda','data','date','dt.venda','dtvenda'];
+const COL_VALOR    = ['valor','valor total','total','vl total','vl. total','price','amount'];
+const COL_VENDEDOR = ['vendedor','rep','representante','rep.','vendedor/rep'];
+
+function normCol(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+
+function detectarColunas(headerRow) {
+  const map = {};
+  headerRow.forEach((h, i) => {
+    const n = normCol(h);
+    if (COL_NUMERO.includes(n))   map.numero   = i;
+    if (COL_CLIENTE.includes(n))  map.cliente  = i;
+    if (COL_DATA.includes(n))     map.data     = i;
+    if (COL_VALOR.includes(n))    map.valor    = i;
+    if (COL_VENDEDOR.includes(n)) map.vendedor = i;
+  });
+  return map;
+}
+
+function excelDataParaISO(val) {
+  if (!val) return today();
+  // Se já é string tipo "2026-04-17" ou "17/04/2026"
+  if (typeof val === 'string') {
+    const parts = val.split('/');
+    if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+    return val.slice(0,10);
+  }
+  // Se é número serial do Excel (dias desde 1/1/1900)
+  if (typeof val === 'number') {
+    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
+    return d.toISOString().slice(0,10);
+  }
+  // Se é Date
+  if (val instanceof Date) return val.toISOString().slice(0,10);
+  return today();
+}
+
+function extrairUFDoNome(nomeVendedor) {
+  // Tenta pegar estado do padrão "NOME - UF"
+  const match = String(nomeVendedor||'').match(/[-–]\s*([A-Z]{2})\s*$/);
+  if (match) {
+    const uf = match[1].toUpperCase();
+    if (UFS.find(u=>u.uf===uf)) return uf;
+  }
+  return '';
+}
+
+function normNome(s){return String(s||'').trim().toUpperCase();}
+
+function jaImportado(numPedido) {
+  const num = String(numPedido);
+  return vendedores.some(v => (v.vendas||[]).some(vd => vd.numeroPedido === num));
+}
+
+function iniciarImport(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = ''; // reset para permitir reimport do mesmo arquivo
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
+
+      if (!rows || rows.length < 2) {
+        showToast('Planilha vazia ou sem dados');
+        return;
+      }
+
+      // Detectar linha de cabeçalho (primeira linha não-vazia)
+      let headerIdx = 0;
+      while (headerIdx < rows.length && rows[headerIdx].every(c => !c)) headerIdx++;
+      
+      const colMap = detectarColunas(rows[headerIdx]);
+
+      if (colMap.valor === undefined || colMap.vendedor === undefined) {
+        alert('Não foi possível identificar as colunas de Valor e Vendedor.\n\nColunas encontradas: ' + rows[headerIdx].join(', ') + '\n\nNomeie as colunas como: Número, Cliente, Dt. Venda, Valor, Vendedor');
+        return;
+      }
+
+      importDados = [];
+      for (let i = headerIdx + 1; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || row.every(c => !c)) continue; // linha vazia
+        
+        const valor = parseFloat(String(row[colMap.valor]||'').replace(',','.').replace(/[^0-9.]/g,''));
+        if (!valor || isNaN(valor)) continue;
+
+        importDados.push({
+          numero:   colMap.numero   !== undefined ? String(row[colMap.numero]||'').trim() : '',
+          cliente:  colMap.cliente  !== undefined ? String(row[colMap.cliente]||'').trim() : '',
+          data:     colMap.data     !== undefined ? excelDataParaISO(row[colMap.data]) : today(),
+          valor:    valor,
+          vendedor: normNome(row[colMap.vendedor]),
+          rowIdx:   i
+        });
+      }
+
+      if (!importDados.length) {
+        showToast('Nenhuma linha válida encontrada');
+        return;
+      }
+
+      // Inicializar vínculos: tentar match automático com vendedores cadastrados
+      importVinculo = {};
+      const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor))];
+      nomesUnicos.forEach(nomeXls => {
+        // Busca por similaridade
+        const match = vendedores.find(v => {
+          const vn = normNome(v.nome);
+          return vn === nomeXls || 
+                 vn.includes(nomeXls.split(' ')[0]) || 
+                 nomeXls.includes(vn.split(' ')[0]);
+        });
+        importVinculo[nomeXls] = match ? match.id : 'NOVO';
+      });
+
+      renderImportStep1();
+      document.getElementById('modalImport').classList.add('open');
+    } catch(err) {
+      console.error(err);
+      alert('Erro ao ler a planilha: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderImportStep1() {
+  importStep = 1;
+  atualizarStepNav();
+
+  const total = importDados.length;
+  const duplicados = importDados.filter(d => d.numero && jaImportado(d.numero)).length;
+  const novos = total - duplicados;
+  const semVendedor = importDados.filter(d => !d.vendedor).length;
+
+  document.getElementById('importStatsRow').innerHTML = `
+    <div class="import-stat is-total">📋 ${total} pedidos</div>
+    <div class="import-stat is-novo">🟢 ${novos} novos</div>
+    ${duplicados ? `<div class="import-stat is-dup">🟡 ${duplicados} duplicados</div>` : ''}
+    ${semVendedor ? `<div class="import-stat is-sem-vendedor">⚠ ${semVendedor} sem vendedor</div>` : ''}
+  `;
+
+  const tbody = document.getElementById('importPreviewBody');
+  tbody.innerHTML = importDados.slice(0,10).map(d => {
+    const dup = d.numero && jaImportado(d.numero);
+    const temVendedor = !!d.vendedor;
+    const rowClass = dup ? 'dup' : (temVendedor ? 'novo' : '');
+    return `<tr class="${rowClass}">
+      <td>${d.numero||'—'}</td>
+      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.cliente||'—'}</td>
+      <td>${d.data}</td>
+      <td><strong>${fmt(d.valor)}</strong></td>
+      <td>${d.vendedor||'<em style="color:var(--red)">não encontrado</em>'}</td>
+      <td>${dup ? '🟡 Duplicado' : (temVendedor ? '🟢 Novo' : '⬜ Sem vendedor')}</td>
+    </tr>`;
+  }).join('');
+
+  if (importDados.length > 10) {
+    tbody.innerHTML += `<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:8px;font-size:11px">... e mais ${importDados.length-10} linhas</td></tr>`;
+  }
+
+  document.getElementById('btnStep2').disabled = false;
+}
+
+function renderImportStep2() {
+  importStep = 2;
+  atualizarStepNav();
+  const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor).filter(Boolean))];
+  const container = document.getElementById('importVendedoresMatch');
+
+  container.innerHTML = nomesUnicos.map(nome => {
+    const opcoes = vendedores.map(v =>
+      `<option value="${v.id}" ${importVinculo[nome]===v.id?'selected':''}>${v.nome}${v.uf?' ('+v.uf+')':''}</option>`
+    ).join('');
+    const vinculo = importVinculo[nome];
+    const statusLabel = vinculo === 'IGNORAR' 
+      ? '<span class="ivm-status ivm-ignorar">Ignorar</span>'
+      : vinculo === 'NOVO' 
+        ? '<span class="ivm-status ivm-novo">Criar novo</span>'
+        : '<span class="ivm-status ivm-ok">Vinculado</span>';
+    const qtd = importDados.filter(d=>d.vendedor===nome).length;
+    return `<div class="import-vendedor-match">
+      <div class="ivm-header">
+        <div class="ivm-nome">📋 ${nome}</div>
+        <div class="ivm-count">${qtd} pedido${qtd!==1?'s':''}</div>
+        ${statusLabel}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select class="ivm-select" id="vinc_${btoa(nome).replace(/[^a-z0-9]/gi,'')}" onchange="atualizarVinculo('${nome.replace(/'/g,"\\'")}', this.value)">
+          <option value="NOVO" ${vinculo==='NOVO'?'selected':''}>➕ Criar novo vendedor</option>
+          <option value="IGNORAR" ${vinculo==='IGNORAR'?'selected':''}>🚫 Ignorar estes pedidos</option>
+          ${opcoes}
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function atualizarVinculo(nome, valor) {
+  importVinculo[nome] = valor;
+  // Atualizar badge status
+  renderImportStep2();
+}
+
+function renderImportStep3() {
+  importStep = 3;
+  atualizarStepNav();
+
+  const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor).filter(Boolean))];
+  let totalImportar = 0, totalIgnorar = 0, totalNovos = 0, totalVinculados = 0;
+
+  nomesUnicos.forEach(nome => {
+    const vinculo = importVinculo[nome];
+    const qtd = importDados.filter(d=>d.vendedor===nome).length;
+    if (vinculo === 'IGNORAR') { totalIgnorar += qtd; return; }
+    totalImportar += qtd;
+    if (vinculo === 'NOVO') totalNovos++;
+    else totalVinculados++;
+  });
+
+  document.getElementById('importConfirmStats').innerHTML = `
+    <div class="import-stat is-novo">✅ ${totalImportar} pedidos a importar</div>
+    ${totalIgnorar ? `<div class="import-stat is-dup">🚫 ${totalIgnorar} ignorados</div>` : ''}
+    ${totalNovos ? `<div class="import-stat is-sem-vendedor">➕ ${totalNovos} vendedores novos</div>` : ''}
+    <div class="import-stat is-total">💰 ${fmt(importDados.filter(d=>importVinculo[d.vendedor]!=='IGNORAR').reduce((a,b)=>a+b.valor,0))}</div>
+  `;
+
+  const resumo = nomesUnicos.filter(n=>importVinculo[n]!=='IGNORAR').map(nome => {
+    const vinculo = importVinculo[nome];
+    const qtd = importDados.filter(d=>d.vendedor===nome).length;
+    const vendLabel = vinculo === 'NOVO' ? `<em>Criar "${nome}"</em>` : (vendedores.find(v=>v.id===vinculo)?.nome||'?');
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+      <span style="flex:1">${nome}</span>
+      <span style="color:var(--text2)">→</span>
+      <span style="font-weight:600;color:var(--blue)">${vendLabel}</span>
+      <span style="color:var(--text2)">(${qtd} pedidos)</span>
+    </div>`;
+  }).join('');
+  document.getElementById('importResumoVendedores').innerHTML = resumo || '<p style="color:var(--text2);font-size:12px">Nenhum vendedor para importar.</p>';
+}
+
+function atualizarStepNav() {
+  [1,2,3].forEach(n => {
+    const el = document.getElementById('sn'+n);
+    el.className = 'step-item' + (n===importStep?' active':'') + (n<importStep?' done':'');
+  });
+  document.querySelectorAll('.import-step').forEach((s,i)=>{
+    s.classList.toggle('active', i+1===importStep);
+  });
+}
+
+function irParaStep(n) {
+  if (n===2) renderImportStep2();
+  else if (n===3) renderImportStep3();
+  else renderImportStep1();
+}
+
+function confirmarImport() {
+  const substituir = document.getElementById('importSubstituir').checked;
+  const criarNovos = document.getElementById('importCriarNovos').checked;
+  
+  let adicionados = 0, substituidos = 0, novosVendedores = 0, ignorados = 0;
+
+  // 1) Criar novos vendedores se necessário
+  const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor).filter(Boolean))];
+  nomesUnicos.forEach(nome => {
+    if (importVinculo[nome] === 'NOVO' && criarNovos) {
+      const uf = extrairUFDoNome(nome);
+      const novoId = uid();
+      vendedores.push({
+        id: novoId,
+        nome: nome,
+        meta: 0,
+        cor: 'azul',
+        uf: uf,
+        vendas: []
+      });
+      importVinculo[nome] = novoId;
+      novosVendedores++;
+    }
+  });
+
+  // 2) Adicionar pedidos
+  importDados.forEach(d => {
+    const vinculo = importVinculo[d.vendedor];
+    if (!vinculo || vinculo === 'IGNORAR' || vinculo === 'NOVO') { ignorados++; return; }
+    
+    const vendedor = vendedores.find(v=>v.id===vinculo);
+    if (!vendedor) { ignorados++; return; }
+    if (!vendedor.vendas) vendedor.vendas = [];
+
+    const dup = d.numero && vendedor.vendas.find(vd=>vd.numeroPedido===d.numero);
+    if (dup) {
+      if (substituir) {
+        const idx = vendedor.vendas.findIndex(vd=>vd.numeroPedido===d.numero);
+        vendedor.vendas[idx] = { id:dup.id, numeroPedido:d.numero, valor:d.valor, data:d.data, desc:d.cliente };
+        substituidos++;
+      } else {
+        ignorados++;
+      }
+      return;
+    }
+
+    vendedor.vendas.push({
+      id: uid(),
+      numeroPedido: d.numero,
+      valor: d.valor,
+      data: d.data,
+      desc: d.cliente
+    });
+    adicionados++;
+  });
+
+  save();
+  closeModal('modalImport');
+  renderAll();
+
+  const msg = `✅ Importado! ${adicionados} pedidos adicionados${substituidos?', '+substituidos+' substituídos':''}${novosVendedores?', '+novosVendedores+' vendedores criados':''}`;
+  showToast(msg);
+}
+
+// Gerar modelo Excel para download
+function baixarModeloExcel() {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['Número','Cliente','Dt. Venda','Valor','Vendedor'],
+    ['20001','EMPRESA EXEMPLO LTDA','2026-04-17','1500.00','JOÃO SILVA - SP'],
+    ['20002','COMÉRCIO ABC','2026-04-17','3200.50','MARIA SOUZA - RJ'],
+    ['20003','INDÚSTRIA XYZ','2026-04-16','850.00','JOÃO SILVA - SP'],
+  ]);
+  ws['!cols'] = [{wch:12},{wch:30},{wch:14},{wch:12},{wch:25}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Pedidos');
+  XLSX.writeFile(wb, 'modelo_pedidos.xlsx');
+  showToast('Modelo baixado!');
+}
 
 // ══════════════════════════════════════════════════════════════
 // NAVEGAÇÃO
@@ -697,7 +1168,7 @@ function renderVendasModal(v){
   if(!v.vendas||!v.vendas.length){list.innerHTML='<div style="text-align:center;color:var(--text2);padding:10px;font-size:12px">Nenhuma venda registrada</div>';return;}
   list.innerHTML=[...v.vendas].reverse().slice(0,20).map(vd=>`
     <div class="venda-item">
-      <span style="color:var(--text2)">${vd.data}${vd.desc?' · '+vd.desc:''}</span>
+      <span style="color:var(--text2)">${vd.data}${vd.numeroPedido?' #'+vd.numeroPedido:''}${vd.desc?' · '+vd.desc:''}</span>
       <span class="v-val">${fmt(vd.valor)}</span>
       <button class="v-del" onclick="deletarVenda('${v.id}','${vd.id}')">✕</button>
     </div>`).join('');
@@ -1067,12 +1538,10 @@ const statusConfig = {
 function renderRepTotal(){
   const busca = (document.getElementById('buscaRepTotal')?.value||'').toLowerCase().trim();
   const filtroStatus = document.getElementById('filtroStatusRep')?.value||'';
-
   let lista = representantes;
   if(busca) lista = lista.filter(r=>r.nome.toLowerCase().includes(busca));
   if(filtroStatus) lista = lista.filter(r=>r.status===filtroStatus);
 
-  // Summary bar — só: ativos, prospectando, malas a voltar, falta mala, falta acesso
   const ativos       = representantes.filter(r=>r.status==='ativo').length;
   const prospectando = representantes.filter(r=>r.status==='prospeccao').length;
   const malaVoltar   = representantes.filter(r=>r.status==='inativo'&&r.malaVoltar).length;
@@ -1087,7 +1556,6 @@ function renderRepTotal(){
     <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${faltaAcesso}</span><span style="color:var(--text2)">Falta acesso</span></div>
   `;
 
-  // Kanban — 3 colunas: Prospectando, Ativo, Inativo
   const board = document.getElementById('kanbanBoard');
   const cols = Object.entries(statusConfig).map(([key, cfg])=>{
     const cards = lista.filter(r=>r.status===key);
