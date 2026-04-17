@@ -761,6 +761,43 @@ function jaImportado(numPedido) {
   return vendedores.some(v => (v.vendas||[]).some(vd => vd.numeroPedido === num));
 }
 
+// Converte qualquer formato de valor para número
+// Aceita: 2151.9 | 2151,9 | 1.234,56 | 1,234.56 | "R$ 1.234,56"
+function parseBRValor(val) {
+  if (val === null || val === undefined || val === '') return NaN;
+  // Se já é número (SheetJS leu como float/int)
+  if (typeof val === 'number') return val;
+  let s = String(val).trim().replace(/[R$\s]/g, '');
+  // Detecta formato: se tem vírgula E ponto, descobre qual é o separador decimal
+  const temPonto = s.includes('.');
+  const temVirgula = s.includes(',');
+  if (temPonto && temVirgula) {
+    // último separador é o decimal
+    const ultimoPonto = s.lastIndexOf('.');
+    const ultimaVirgula = s.lastIndexOf(',');
+    if (ultimaVirgula > ultimoPonto) {
+      // formato: 1.234,56 → BR
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else {
+      // formato: 1,234.56 → EN
+      s = s.replace(/,/g, '');
+    }
+  } else if (temVirgula) {
+    // Só vírgula: pode ser decimal (1234,56) ou milhar (1,234)
+    const partes = s.split(',');
+    if (partes.length === 2 && partes[1].length <= 2) {
+      // decimal BR: 1234,56
+      s = s.replace(',', '.');
+    } else {
+      // milhar: 1,234,567
+      s = s.replace(/,/g, '');
+    }
+  }
+  // Remove qualquer char restante que não seja número ou ponto
+  s = s.replace(/[^0-9.]/g, '');
+  return parseFloat(s);
+}
+
 function iniciarImport(input) {
   const file = input.files[0];
   if (!file) return;
@@ -795,7 +832,7 @@ function iniciarImport(input) {
         const row = rows[i];
         if (!row || row.every(c => !c)) continue; // linha vazia
         
-        const valor = parseFloat(String(row[colMap.valor]||'').replace(',','.').replace(/[^0-9.]/g,''));
+        const valor = parseBRValor(row[colMap.valor]);
         if (!valor || isNaN(valor)) continue;
 
         importDados.push({
