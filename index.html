@@ -262,6 +262,55 @@
   .step-item.active { background: var(--blue); color: #fff; }
   .step-item.done { background: var(--green-light); color: var(--green); }
   @media(max-width:600px){main{padding:14px;}header{padding:0 14px;}.rank-top3{grid-template-columns:1fr;}.logo-upload-btn{width:160px;}.uf-grid{grid-template-columns:repeat(5,1fr);}}
+
+  /* ── Contrato badge ── */
+  .contrato-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:5px; font-size:10px; font-weight:700; letter-spacing:.4px; margin-top:4px; }
+  .contrato-sim { background:#f3e8ff; color:#7c3aed; border:1px solid #c4b5fd; }
+  .contrato-nao { background:#1e1e1e; color:#fff; border:1px solid #333; }
+  .contrato-venc { font-size:9px; opacity:.85; }
+
+  /* ── Ranking arrows ── */
+  .rank-arrow { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:4px; font-size:12px; font-weight:700; margin-left:4px; flex-shrink:0; }
+  .arrow-up { background:#f0fdf4; color:#16a34a; }
+  .arrow-down { background:#fef2f2; color:#dc2626; }
+  .arrow-same { background:#f1f5f9; color:#94a3b8; }
+  .rank-row { display:grid; grid-template-columns:40px 1fr auto auto auto; gap:10px; padding:10px 16px; border-bottom:1px solid var(--border); align-items:center; transition:background .1s; }
+
+  /* ── Metas redesign ── */
+  .metas-grid-new { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:16px; margin-bottom:28px; }
+  .meta-card-new { background:#fff; border-radius:10px; box-shadow:0 2px 12px rgba(0,0,0,0.07); border:1px solid var(--border); overflow:hidden; transition:box-shadow .2s,transform .2s; }
+  .meta-card-new:hover { box-shadow:0 6px 22px rgba(0,0,0,0.11); transform:translateY(-2px); }
+  .meta-card-new .mcn-top { height:4px; }
+  .meta-card-new .mcn-header { padding:16px 16px 12px; display:flex; align-items:center; gap:12px; }
+  .meta-card-new .mcn-avatar { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:800; flex-shrink:0; }
+  .meta-card-new .mcn-info { flex:1; min-width:0; }
+  .meta-card-new .mcn-name { font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .meta-card-new .mcn-sub { font-size:11px; color:var(--text2); margin-top:2px; display:flex; align-items:center; gap:6px; }
+  .meta-card-new .mcn-ring { position:relative; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .meta-card-new .mcn-pct-label { position:absolute; font-size:13px; font-weight:800; color:var(--text); }
+  .meta-card-new .mcn-body { padding:0 16px 14px; }
+  .meta-card-new .mcn-bar-row { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--text2); margin-bottom:6px; }
+  .meta-card-new .mcn-bar-outer { height:8px; background:#f1f5f9; border-radius:99px; overflow:hidden; margin-bottom:12px; }
+  .meta-card-new .mcn-bar-fill { height:100%; border-radius:99px; transition:width .5s ease; }
+  .meta-card-new .mcn-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .meta-card-new .mcn-stat { background:var(--surface2); border-radius:7px; padding:10px 8px; text-align:center; }
+  .meta-card-new .mcn-stat .sv { font-size:13px; font-weight:700; }
+  .meta-card-new .mcn-stat .sl { font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; color:var(--text2); margin-top:2px; }
+  .meta-card-new .mcn-falta-box { margin-top:10px; background:linear-gradient(135deg,#fef2f2,#fff5f5); border:1px solid #fecaca; border-radius:7px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; }
+  .meta-card-new .mcn-falta-box.bateu { background:linear-gradient(135deg,#f0fdf4,#f7fef9); border-color:#bbf7d0; }
+  .meta-card-new .mcn-falta-label { font-size:11px; color:var(--text2); }
+  .meta-card-new .mcn-falta-val { font-size:14px; font-weight:800; }
+
+  /* ── Meta header stats ── */
+  .meta-summary-bar { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-bottom:24px; }
+  .msb-card { background:#fff; border-radius:10px; border:1px solid var(--border); padding:16px 18px; box-shadow:var(--shadow); }
+  .msb-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--text2); margin-bottom:4px; }
+  .msb-val { font-size:24px; font-weight:800; line-height:1; }
+  .msb-sub { font-size:11px; color:var(--text2); margin-top:4px; }
+  .meta-progress-global { background:#fff; border-radius:10px; border:1px solid var(--border); padding:16px 20px; margin-bottom:24px; box-shadow:var(--shadow); }
+  .mpg-row { display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:600; margin-bottom:8px; }
+  .mpg-bar { height:12px; background:#f1f5f9; border-radius:99px; overflow:hidden; }
+  .mpg-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#2563eb,#16a34a); transition:width .6s ease; }
 </style>
 </head>
 <body>
@@ -338,9 +387,10 @@
       </div>
       <input type="date" class="filter-input" id="filtroData" onchange="renderAll()">
     </div>
-    <div class="stats-row" id="metaStatsRow"></div>
+    <div class="meta-summary-bar" id="metaSummaryBar"></div>
+    <div class="meta-progress-global" id="metaProgressGlobal"></div>
     <div class="sec-title">Desempenho por Vendedor</div>
-    <div class="metas-grid" id="metasGrid"></div>
+    <div class="metas-grid-new" id="metasGrid"></div>
   </div>
 
   <!-- RANKING -->
@@ -434,6 +484,17 @@
         <div class="color-opt" data-cor="azul" onclick="selectCor('azul')">Azul</div>
         <div class="color-opt" data-cor="amarelo" onclick="selectCor('amarelo')">Amarelo</div>
         <div class="color-opt" data-cor="vermelho" onclick="selectCor('vermelho')">Vermelho</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contrato</label>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div class="status-opt" data-contrato="sim" onclick="selectContrato('sim')" style="flex:1">✅ Tem contrato</div>
+        <div class="status-opt" data-contrato="nao" onclick="selectContrato('nao')" style="flex:1">🚫 Sem contrato</div>
+      </div>
+      <div id="contratoVencGroup" style="display:none">
+        <label class="form-label">Vencimento do contrato</label>
+        <input class="form-input" id="inputContratoVenc" type="date">
       </div>
     </div>
     <div class="modal-actions">
@@ -593,9 +654,11 @@ let ufSelecionada = '';
 let editRepId = null;
 let statusRepSelecionado = 'prospeccao';
 let ufRepSelecionada = '';
-// ─── NOVO: controle do filtro por stat card ───────────────────
+let contratoSelecionado = 'nao';
+// ─── controle do filtro por stat card ────────────────────────
 let filtroStatAtivo = ''; // '', 'bateram', 'abaixo', 'sem'
-// ─────────────────────────────────────────────────────────────
+// ─── histórico de posições do ranking ────────────────────────
+let rankingPrevio = JSON.parse(localStorage.getItem('vh_rankingPrev') || '{}');
 
 let importDados = [];
 let importVinculo = {};
@@ -988,11 +1051,15 @@ function openModal(mode,id=null){
     document.getElementById('inputMeta').value=v.meta;
     corSelecionada=v.cor;selectCor(v.cor);
     ufSelecionada=v.uf||'';buildUFGrid('ufGrid',ufSelecionada);
+    contratoSelecionado=v.contrato||'nao';selectContrato(contratoSelecionado);
+    document.getElementById('inputContratoVenc').value=v.contratoVenc||'';
   } else {
     document.getElementById('inputNome').value='';
     document.getElementById('inputMeta').value='';
     corSelecionada='verde';selectCor('verde');
     ufSelecionada='';buildUFGrid('ufGrid','');
+    contratoSelecionado='nao';selectContrato('nao');
+    document.getElementById('inputContratoVenc').value='';
   }
   document.getElementById('modalVendedor').classList.add('open');
 }
@@ -1001,13 +1068,22 @@ function selectCor(cor){
   corSelecionada=cor;
   document.querySelectorAll('.color-opt').forEach(el=>{el.className='color-opt';if(el.dataset.cor===cor)el.classList.add('sel-'+cor);});
 }
+function selectContrato(c){
+  contratoSelecionado=c;
+  document.querySelectorAll('[data-contrato]').forEach(el=>{
+    el.className='status-opt';
+    if(el.dataset.contrato===c) el.classList.add(c==='sim'?'sel-ativo':'sel-inativo');
+  });
+  document.getElementById('contratoVencGroup').style.display=c==='sim'?'block':'none';
+}
 function salvarVendedor(){
   const nome=document.getElementById('inputNome').value.trim();
   const meta=parseFloat(document.getElementById('inputMeta').value)||0;
   if(!nome){showToast('Informe o nome');return;}
   if(!meta){showToast('Informe a meta');return;}
-  if(editId){const v=vendedores.find(x=>x.id===editId);v.nome=nome;v.meta=meta;v.cor=corSelecionada;v.uf=ufSelecionada;showToast('Atualizado');}
-  else{vendedores.push({id:uid(),nome,meta,cor:corSelecionada,uf:ufSelecionada,vendas:[]});showToast('Vendedor adicionado');}
+  const contratoVenc=contratoSelecionado==='sim'?(document.getElementById('inputContratoVenc').value||''):'';
+  if(editId){const v=vendedores.find(x=>x.id===editId);v.nome=nome;v.meta=meta;v.cor=corSelecionada;v.uf=ufSelecionada;v.contrato=contratoSelecionado;v.contratoVenc=contratoVenc;showToast('Atualizado');}
+  else{vendedores.push({id:uid(),nome,meta,cor:corSelecionada,uf:ufSelecionada,vendas:[],contrato:contratoSelecionado,contratoVenc});showToast('Vendedor adicionado');}
   save();closeModal('modalVendedor');renderAll();
 }
 function deletarVendedor(id){
@@ -1172,6 +1248,10 @@ function renderVendedores(){
   grid.innerHTML=lista.map(v=>{
     const total=totalPeriodo(v),pct=v.meta>0?Math.min(100,Math.round(total/v.meta*100)):0;
     const falta=Math.max(0,v.meta-total),nv=vendasNoPeriodo(v).length;
+    const temContrato=v.contrato==='sim';
+    const contratoBadge=temContrato
+      ?`<span class="contrato-badge contrato-sim">🟣 CONTRATO${v.contratoVenc?`<span class="contrato-venc"> · vence ${v.contratoVenc}</span>`:''}</span>`
+      :`<span class="contrato-badge contrato-nao">⚫ SEM CONTRATO</span>`;
     return `<div class="vendedor-card">
       <div class="card-top top-${v.cor}"></div>
       <div class="card-header">
@@ -1182,6 +1262,7 @@ function renderVendedores(){
             <span class="vtag vtag-${v.cor}">${tagLabels[v.cor]}</span>
             ${v.uf?`<span class="uf-badge">${v.uf}</span>`:''}
           </div>
+          ${contratoBadge}
         </div>
         <div class="card-actions">
           <button class="btn-icon add" onclick="openModalVenda('${v.id}')" title="Registrar venda">+</button>
@@ -1250,40 +1331,77 @@ function pizzaSVG(pct,cor){
 }
 
 function renderMetas(){
-  const bateram=vendedores.filter(v=>totalPeriodo(v)>=v.meta).length;
+  const bateram=vendedores.filter(v=>totalPeriodo(v)>=v.meta&&v.meta>0).length;
   const sem=vendedores.filter(v=>vendasNoPeriodo(v).length===0).length;
   const fat=vendedores.reduce((a,v)=>a+totalPeriodo(v),0);
   const tmeta=vendedores.reduce((a,v)=>a+(+v.meta),0);
-  document.getElementById('metaStatsRow').innerHTML=`
-    <div class="stat-card s-green"><div class="label">Bateram Meta</div><div class="value">${bateram}/${vendedores.length}</div></div>
-    <div class="stat-card s-red"><div class="label">Sem Vender</div><div class="value">${sem}</div></div>
-    <div class="stat-card s-blue"><div class="label">Faturamento</div><div class="value" style="font-size:17px">${fmt(fat)}</div></div>
-    <div class="stat-card s-yellow"><div class="label">Meta da Equipe</div><div class="value" style="font-size:17px">${fmt(tmeta)}</div></div>`;
+  const pctGlobal=tmeta>0?Math.min(100,Math.round(fat/tmeta*100)):0;
+  const faltaGlobal=Math.max(0,tmeta-fat);
+
+  document.getElementById('metaSummaryBar').innerHTML=`
+    <div class="msb-card"><div class="msb-label">🎯 Bateram Meta</div><div class="msb-val" style="color:var(--green)">${bateram}<span style="font-size:16px;color:var(--text2)">/${vendedores.length}</span></div><div class="msb-sub">${vendedores.length?Math.round(bateram/vendedores.length*100):0}% da equipe</div></div>
+    <div class="msb-card"><div class="msb-label">💤 Sem Vender</div><div class="msb-val" style="color:var(--red)">${sem}</div><div class="msb-sub">no período</div></div>
+    <div class="msb-card"><div class="msb-label">💰 Faturamento</div><div class="msb-val" style="font-size:18px;color:var(--blue)">${fmt(fat)}</div><div class="msb-sub">no período</div></div>
+    <div class="msb-card"><div class="msb-label">📋 Meta da Equipe</div><div class="msb-val" style="font-size:18px;color:var(--yellow)">${fmt(tmeta)}</div><div class="msb-sub">total cadastrado</div></div>`;
+
+  document.getElementById('metaProgressGlobal').innerHTML=`
+    <div class="mpg-row"><span style="font-weight:700">📊 Progresso Global da Equipe</span><span style="font-size:13px;color:${pctGlobal>=100?'var(--green)':'var(--blue)'};font-weight:700">${pctGlobal}%</span></div>
+    <div class="mpg-bar"><div class="mpg-fill" style="width:${pctGlobal}%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-top:8px">
+      <span>Realizado: <strong style="color:var(--green)">${fmt(fat)}</strong></span>
+      <span>${pctGlobal>=100?'✅ Meta atingida!':'Falta: <strong style="color:var(--red)">'+fmt(faltaGlobal)+'</strong>'}</span>
+    </div>`;
+
   const grid=document.getElementById('metasGrid');
   if(!vendedores.length){grid.innerHTML='<div class="empty-state"><div class="icon">🎯</div><h3>Sem vendedores</h3></div>';return;}
   const c={verde:'#16a34a',azul:'#2563eb',amarelo:'#d97706',vermelho:'#dc2626'};
+  const initials=nome=>nome.split(' ').slice(0,2).map(p=>p[0]||'').join('').toUpperCase();
   grid.innerHTML=vendedores.map(v=>{
-    const total=totalPeriodo(v),pct=v.meta>0?Math.min(100,Math.round(total/v.meta*100)):0;
-    const falta=Math.max(0,v.meta-total),nv=vendasNoPeriodo(v).length;
-    return `<div class="meta-card">
-      <div class="meta-header">
-        <div style="width:3px;height:32px;background:${c[v.cor]};border-radius:2px;flex-shrink:0"></div>
-        <div style="flex:1"><div class="meta-name">${v.nome}${v.uf?` <span class="uf-badge">${v.uf}</span>`:''}</div>
-        <span class="vtag vtag-${v.cor}" style="margin-top:3px;display:inline-block">${v.cor}</span></div>
-        <span style="font-size:11px;color:var(--text2)">${nv} venda${nv!==1?'s':''}</span>
-      </div>
-      <div class="pizza-wrap">
-        ${pizzaSVG(pct,v.cor)}
-        <div class="pizza-legend">
-          <div class="legend-item"><div class="legend-dot" style="background:${c[v.cor]}"></div><span>Realizado</span><span class="legend-val" style="color:${c[v.cor]}">${fmt(total)}</span></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#e5e7eb"></div><span>Falta</span><span class="legend-val" style="color:var(--red)">${fmt(falta)}</span></div>
-          <div class="legend-item"><div class="legend-dot" style="background:#94a3b8"></div><span>Meta</span><span class="legend-val">${fmt(v.meta)}</span></div>
+    const total=totalPeriodo(v);
+    // pct real sem cap para o anel (para quem bateu a meta mostrar 100% cheio)
+    const pctReal=v.meta>0?Math.round(total/v.meta*100):0;
+    const pctRing=Math.min(100,pctReal);
+    const falta=Math.max(0,v.meta-total);
+    const nv=vendasNoPeriodo(v).length;
+    const cor=c[v.cor]||'#2563eb';
+    const bateu=pctReal>=100;
+    // SVG ring preciso
+    const R=36,sw=7,circ=2*Math.PI*R,dash=circ*(pctRing/100);
+    const ringSVG=`<svg width="90" height="90" viewBox="0 0 90 90">
+      <circle cx="45" cy="45" r="${R}" fill="none" stroke="#f1f5f9" stroke-width="${sw}"/>
+      <circle cx="45" cy="45" r="${R}" fill="none" stroke="${cor}" stroke-width="${sw}"
+        stroke-dasharray="${dash.toFixed(2)} ${circ.toFixed(2)}" stroke-dashoffset="${(circ/4).toFixed(2)}"
+        stroke-linecap="round" style="transition:stroke-dasharray .5s ease"/>
+      ${bateu?`<circle cx="45" cy="45" r="${R}" fill="none" stroke="${cor}" stroke-width="${sw}" opacity=".15"/>`:'' }
+    </svg>`;
+    return `<div class="meta-card-new">
+      <div class="mcn-top" style="background:${cor}"></div>
+      <div class="mcn-header">
+        <div class="mcn-avatar" style="background:${cor}18;color:${cor}">${initials(v.nome)}</div>
+        <div class="mcn-info">
+          <div class="mcn-name">${v.nome}</div>
+          <div class="mcn-sub">
+            ${v.uf?`<span class="uf-badge">${v.uf}</span>`:''}
+            <span class="vtag vtag-${v.cor}" style="margin:0">${tagLabels[v.cor]||v.cor}</span>
+          </div>
+        </div>
+        <div class="mcn-ring" style="width:90px;height:90px">
+          ${ringSVG}
+          <div class="mcn-pct-label" style="color:${bateu?'var(--green)':cor}">${pctReal}%</div>
         </div>
       </div>
-      <div class="meta-footer-stats">
-        <div class="mfs"><div class="v">${nv}</div><div class="l">Vendas</div></div>
-        <div class="mfs"><div class="v" style="color:${pct>=100?'var(--green)':'var(--red)'}">${pct}%</div><div class="l">da Meta</div></div>
-        <div class="mfs"><div class="v" style="color:${pct>=100?'var(--green)':'var(--yellow)'}">${pct>=100?'✓':'—'}</div><div class="l">${pct>=100?'Atingiu':'Pendente'}</div></div>
+      <div class="mcn-body">
+        <div class="mcn-bar-row"><span>Progresso até a meta</span><span style="font-weight:700;color:${cor}">${fmt(total)} / ${fmt(v.meta)}</span></div>
+        <div class="mcn-bar-outer"><div class="mcn-bar-fill" style="width:${pctRing}%;background:${cor}"></div></div>
+        <div class="mcn-stats">
+          <div class="mcn-stat"><div class="sv" style="color:var(--green)">${fmt(total)}</div><div class="sl">Realizado</div></div>
+          <div class="mcn-stat"><div class="sv">${nv}</div><div class="sl">Vendas</div></div>
+          <div class="mcn-stat"><div class="sv" style="color:${bateu?'var(--green)':'var(--red)'}">${bateu?'✓':pctReal+'%'}</div><div class="sl">${bateu?'Atingiu':'da Meta'}</div></div>
+        </div>
+        <div class="mcn-falta-box${bateu?' bateu':''}">
+          <span class="mcn-falta-label">${bateu?'🏆 Meta batida!':'💡 Falta para bater a meta'}</span>
+          <span class="mcn-falta-val" style="color:${bateu?'var(--green)':'var(--red)'}">${bateu?'+'+fmt(total-v.meta):fmt(falta)}</span>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -1293,6 +1411,24 @@ function renderRanking(){
   const wrap=document.getElementById('rankingWrap');
   if(!vendedores.length){wrap.innerHTML='<div class="empty-state"><div class="icon">🏆</div><h3>Sem dados</h3></div>';return;}
   const sorted=[...vendedores].map(v=>({...v,_t:totalPeriodo(v),_nv:vendasNoPeriodo(v).length})).sort((a,b)=>b._t-a._t);
+
+  // Salvar posições atuais e calcular movimento
+  const posAtual={};
+  sorted.forEach((v,i)=>posAtual[v.id]=i+1);
+
+  function arrowHTML(id,posNova){
+    const posAnterior=rankingPrevio[id];
+    if(!posAnterior||posAnterior===posNova) return '<span class="rank-arrow arrow-same" title="Mesma posição">—</span>';
+    if(posAnterior>posNova) return `<span class="rank-arrow arrow-up" title="Subiu ${posAnterior-posNova} posição">▲</span>`;
+    return `<span class="rank-arrow arrow-down" title="Caiu ${posNova-posAnterior} posição">▼</span>`;
+  }
+
+  // Atualizar histórico ao renderizar
+  setTimeout(()=>{
+    rankingPrevio=posAtual;
+    localStorage.setItem('vh_rankingPrev',JSON.stringify(rankingPrevio));
+  },3000);
+
   const top3=sorted.slice(0,3),rest=sorted.slice(3);
   const medals=['🥇','🥈','🥉'];
   const display=top3.length===1?[0]:top3.length===2?[1,0]:[1,0,2];
@@ -1300,9 +1436,12 @@ function renderRanking(){
   display.forEach(i=>{
     if(!top3[i]){pod+='<div></div>';return;}
     const v=top3[i];
+    const arr=arrowHTML(v.id,i+1);
     pod+=`<div class="rank-podium pos${i+1}">
       <span class="rank-medal">${medals[i]}</span>
-      <div class="rank-pos-label">${i+1}º lugar</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:4px">
+        <div class="rank-pos-label">${i+1}º lugar</div>${arr}
+      </div>
       <div class="rank-name">${v.nome}</div>
       ${v.uf?`<div style="font-size:11px;color:var(--text2);margin-bottom:3px">${v.uf} — ${nomeUF(v.uf)}</div>`:''}
       <div class="rank-val">${fmt(v._t)}</div>
@@ -1311,13 +1450,16 @@ function renderRanking(){
     </div>`;
   });
   pod+='</div>';
-  const table=rest.length?`<div class="rank-table">${rest.map((v,i)=>`
-    <div class="rank-row">
+  const table=rest.length?`<div class="rank-table">${rest.map((v,i)=>{
+    const arr=arrowHTML(v.id,i+4);
+    return `<div class="rank-row">
       <div class="rank-pos">${i+4}º</div>
       <div class="rank-name-col">${v.nome} ${v.uf?`<span class="uf-badge">${v.uf}</span>`:''} <span class="vtag vtag-${v.cor}">${v.cor}</span></div>
       <div class="rank-vendas-col">${v._nv} vendas</div>
       <div class="rank-val-col">${fmt(v._t)}</div>
-    </div>`).join('')}</div>`:'';
+      <div>${arr}</div>
+    </div>`;
+  }).join('')}</div>`:'';
   wrap.innerHTML=pod+table;
 }
 
