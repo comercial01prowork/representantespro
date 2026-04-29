@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sistema Comercial</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<!-- SheetJS para leitura de Excel no browser -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
@@ -39,11 +38,24 @@
   .page { display:none; }
   .page.active { display:block; }
   .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:24px; }
-  .stat-card { background:#fff; border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); }
-  .stat-card .label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; }
+  .stat-card { background:#fff; border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--border); transition: box-shadow .18s, transform .18s, border-color .18s; }
+  .stat-card.clickable { cursor:pointer; }
+  .stat-card.clickable:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.10); }
+  .stat-card.s-green.stat-active { border-color: var(--green); box-shadow: 0 0 0 2px var(--green), 0 2px 10px rgba(22,163,74,0.12); transform: translateY(-2px); }
+  .stat-card.s-yellow.stat-active { border-color: var(--yellow); box-shadow: 0 0 0 2px var(--yellow), 0 2px 10px rgba(217,119,6,0.12); transform: translateY(-2px); }
+  .stat-card.s-red.stat-active { border-color: var(--red); box-shadow: 0 0 0 2px var(--red), 0 2px 10px rgba(220,38,38,0.12); transform: translateY(-2px); }
+  .stat-card .label { font-size:11px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.6px; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+  .stat-card .label .click-hint { font-size:10px; opacity:0.6; }
   .stat-card .value { font-size:26px; font-weight:700; line-height:1; }
   .stat-card .sub { font-size:12px; color:var(--text2); margin-top:4px; }
   .stat-card.s-green .value{color:var(--green);} .stat-card.s-blue .value{color:var(--blue);} .stat-card.s-yellow .value{color:var(--yellow);} .stat-card.s-red .value{color:var(--red);} .stat-card.s-purple .value{color:var(--purple);}
+  .stat-filter-banner { background:var(--blue-light); border:1px solid #bfdbfe; border-radius:6px; padding:9px 16px; margin-bottom:14px; display:flex; align-items:center; justify-content:space-between; font-size:13px; font-weight:500; color:var(--blue); animation: fadeInDown .2s ease; }
+  .stat-filter-banner.banner-green { background:var(--green-light); border-color:#bbf7d0; color:var(--green); }
+  .stat-filter-banner.banner-yellow { background:var(--yellow-light); border-color:#fde68a; color:var(--yellow); }
+  .stat-filter-banner.banner-red { background:var(--red-light); border-color:#fecaca; color:var(--red); }
+  .banner-clear-btn { background:transparent; border:none; cursor:pointer; font-size:13px; font-weight:700; padding:0 4px; opacity:.7; }
+  .banner-clear-btn:hover { opacity:1; }
+  @keyframes fadeInDown { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
   .sec-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--text2); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border); }
   .vendedores-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:12px; margin-bottom:28px; }
   .vendedor-card { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); border:1px solid var(--border); overflow:hidden; transition:box-shadow .2s; }
@@ -174,8 +186,6 @@
   .venda-item .v-val{font-weight:700;color:var(--blue);}
   .venda-item .v-del{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:0 3px;}
   .row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-
-  /* === ABA REPRESENTANTES TOTAIS === */
   .rep-total-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
   .rep-total-search { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .kanban-board { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-bottom:24px; }
@@ -211,19 +221,7 @@
   .rep-summary-bar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
   .rep-summary-item { background:#fff; border:1px solid var(--border); border-radius:6px; padding:10px 16px; display:flex; align-items:center; gap:10px; font-size:13px; }
   .rep-summary-num { font-size:20px; font-weight:700; }
-
-  /* === IMPORTAÇÃO EXCEL === */
-  .import-banner {
-    background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
-    border: 1px solid #bbf7d0;
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+  .import-banner { background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%); border: 1px solid #bbf7d0; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .import-banner-icon { font-size: 28px; flex-shrink: 0; }
   .import-banner-text { flex: 1; min-width: 200px; }
   .import-banner-text h3 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
@@ -232,8 +230,6 @@
   .btn-import { background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 8px 16px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .15s; position: relative; overflow: hidden; }
   .btn-import:hover { background: #15803d; }
   .btn-import input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-
-  /* Modal Importação */
   .modal.modal-wide { max-width: 700px; }
   .import-preview-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 14px; }
   .import-preview-table th { background: var(--surface2); padding: 7px 10px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--text2); border-bottom: 2px solid var(--border); }
@@ -265,7 +261,6 @@
   .step-item:last-child { border-right: none; }
   .step-item.active { background: var(--blue); color: #fff; }
   .step-item.done { background: var(--green-light); color: var(--green); }
-
   @media(max-width:600px){main{padding:14px;}header{padding:0 14px;}.rank-top3{grid-template-columns:1fr;}.logo-upload-btn{width:160px;}.uf-grid{grid-template-columns:repeat(5,1fr);}}
 </style>
 </head>
@@ -292,8 +287,6 @@
 <main>
   <!-- VENDEDORES -->
   <div class="page active" id="page-vendedores">
-
-    <!-- BANNER IMPORTAÇÃO -->
     <div class="import-banner">
       <div class="import-banner-icon">📊</div>
       <div class="import-banner-text">
@@ -317,7 +310,10 @@
       <div class="cl-item"><div class="cl-dot" style="background:#dc2626"></div>Vermelho — Precisa de Atenção</div>
     </div>
     <div class="row-between">
-      <div class="sec-title" style="margin:0;border:none;padding:0">Vendedores</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="sec-title" style="margin:0;border:none;padding:0">Vendedores</div>
+        <div id="filtroAtivoBadge" style="display:none"></div>
+      </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <div class="search-wrap">
           <input class="search-input" id="buscaNomeVendedor" type="text" placeholder="Buscar por nome..." oninput="renderVendedores()">
@@ -328,6 +324,7 @@
         <button class="btn-primary" onclick="openModal('add')">+ Novo Vendedor</button>
       </div>
     </div>
+    <div id="statFilterBannerContainer"></div>
     <div class="vendedores-grid" id="vendedoresGrid"></div>
   </div>
 
@@ -516,74 +513,45 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ -->
-<!-- MODAL IMPORTAÇÃO EXCEL                                   -->
-<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODAL IMPORTAÇÃO -->
 <div class="modal-overlay" id="modalImport">
   <div class="modal modal-wide">
     <div class="modal-title">📊 Importar Pedidos do Excel</div>
-
-    <!-- Steps nav -->
     <div class="step-nav" id="stepNav">
       <div class="step-item active" id="sn1">1. Prévia</div>
       <div class="step-item" id="sn2">2. Vincular Vendedores</div>
       <div class="step-item" id="sn3">3. Confirmar</div>
     </div>
-
-    <!-- STEP 1: Prévia dos dados -->
     <div class="import-step active" id="importStep1">
       <div class="import-stats-row" id="importStatsRow"></div>
       <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">Prévia dos dados (primeiras 10 linhas)</div>
       <div class="import-scroll">
         <table class="import-preview-table" id="importPreviewTable">
-          <thead>
-            <tr>
-              <th>Nº Pedido</th>
-              <th>Cliente</th>
-              <th>Data</th>
-              <th>Valor</th>
-              <th>Vendedor (planilha)</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Nº Pedido</th><th>Cliente</th><th>Data</th><th>Valor</th><th>Vendedor (planilha)</th><th>Status</th></tr></thead>
           <tbody id="importPreviewBody"></tbody>
         </table>
       </div>
-      <div style="font-size:11px;color:var(--text2);margin-top:8px">
-        🟢 Verde = pedido novo &nbsp;|&nbsp; 🟡 Amarelo = já importado (mesmo nº de pedido) &nbsp;|&nbsp; ⬜ Branco = sem correspondência de vendedor
-      </div>
+      <div style="font-size:11px;color:var(--text2);margin-top:8px">🟢 Verde = pedido novo &nbsp;|&nbsp; 🟡 Amarelo = já importado &nbsp;|&nbsp; ⬜ Branco = sem correspondência</div>
       <div class="modal-actions" style="margin-top:16px">
         <button class="btn-secondary" onclick="closeModal('modalImport')">Cancelar</button>
         <button class="btn-primary" onclick="irParaStep(2)" id="btnStep2" disabled>Próximo →</button>
       </div>
     </div>
-
-    <!-- STEP 2: Vincular vendedores da planilha com os cadastrados -->
     <div class="import-step" id="importStep2">
-      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">
-        Associe cada nome da planilha com um vendedor cadastrado no sistema (ou crie um novo automaticamente).
-      </div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px">Associe cada nome da planilha com um vendedor cadastrado.</div>
       <div id="importVendedoresMatch"></div>
       <div class="modal-actions" style="margin-top:16px">
         <button class="btn-secondary" onclick="irParaStep(1)">← Voltar</button>
         <button class="btn-primary" onclick="irParaStep(3)">Próximo →</button>
       </div>
     </div>
-
-    <!-- STEP 3: Confirmar importação -->
     <div class="import-step" id="importStep3">
       <div class="import-stats-row" id="importConfirmStats"></div>
       <div id="importResumoVendedores" style="margin-bottom:14px"></div>
       <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Ao confirmar, os pedidos serão adicionados às vendas dos vendedores correspondentes.</div>
       <div id="importOpcoes" style="margin-bottom:14px">
-        <label class="check-item" style="margin-bottom:8px">
-          <input type="checkbox" id="importSubstituir"> 
-          <span>Substituir pedidos duplicados (mesmo número)</span>
-        </label>
-        <label class="check-item">
-          <input type="checkbox" id="importCriarNovos" checked>
-          <span>Criar novos vendedores automaticamente para nomes sem correspondência</span>
-        </label>
+        <label class="check-item" style="margin-bottom:8px"><input type="checkbox" id="importSubstituir"> <span>Substituir pedidos duplicados</span></label>
+        <label class="check-item"><input type="checkbox" id="importCriarNovos" checked><span>Criar novos vendedores automaticamente</span></label>
       </div>
       <div class="modal-actions" style="margin-top:16px">
         <button class="btn-secondary" onclick="irParaStep(2)">← Voltar</button>
@@ -596,9 +564,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
-// CONFIGURAÇÃO
-// ══════════════════════════════════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbwiMB6FkftJLjVW4ItFlEMCKsmBLmkf3VQHFEbpqqBo2yxjySPP2UtpO7AfmwIhRoWWYg/exec';
 
 const UFS = [
@@ -628,19 +593,19 @@ let ufSelecionada = '';
 let editRepId = null;
 let statusRepSelecionado = 'prospeccao';
 let ufRepSelecionada = '';
+// ─── NOVO: controle do filtro por stat card ───────────────────
+let filtroStatAtivo = ''; // '', 'bateram', 'abaixo', 'sem'
+// ─────────────────────────────────────────────────────────────
 
-// Estado da importação
-let importDados = [];        // linhas lidas do Excel
-let importVinculo = {};      // { nomeNaPlanilha: vendedorId | 'NOVO' | 'IGNORAR' }
+let importDados = [];
+let importVinculo = {};
 let importStep = 1;
 
-// ══════════════════════════════════════════════════════════════
-// SYNC
-// ══════════════════════════════════════════════════════════════
+// ══ SYNC ══════════════════════════════════════════════════════
 function setSyncStatus(s, msg) {
   const ind=document.getElementById('syncIndicator'), dot=document.getElementById('syncDot'), txt=document.getElementById('syncText');
-  ind.className='sync-indicator '+(s||''); 
-  dot.className='sync-dot'+(s==='syncing'?' spin':''); 
+  ind.className='sync-indicator '+(s||'');
+  dot.className='sync-dot'+(s==='syncing'?' spin':'');
   txt.textContent=msg;
 }
 async function syncSave() {
@@ -670,9 +635,7 @@ async function syncLoad() {
   renderAll();
 }
 
-// ══════════════════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════════════════
+// ══ HELPERS ═══════════════════════════════════════════════════
 function save(){
   localStorage.setItem('vh_vendedores', JSON.stringify(vendedores));
   localStorage.setItem('vh_representantes', JSON.stringify(representantes));
@@ -700,11 +663,20 @@ function getDateRange(){
 function vendasNoPeriodo(v){const[s,e]=getDateRange();return(v.vendas||[]).filter(vd=>vd.data>=s&&vd.data<=e);}
 function totalPeriodo(v){return vendasNoPeriodo(v).reduce((a,b)=>a+(+b.valor),0);}
 
-// ══════════════════════════════════════════════════════════════
-// IMPORTAÇÃO EXCEL
-// ══════════════════════════════════════════════════════════════
+// ══ FILTRO POR STAT CARD (NOVO) ═══════════════════════════════
+function toggleStatFilter(tipo) {
+  filtroStatAtivo = (filtroStatAtivo === tipo) ? '' : tipo;
+  renderStats();
+  renderVendedores();
+  if (filtroStatAtivo) {
+    setTimeout(() => {
+      const grid = document.getElementById('vendedoresGrid');
+      grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }
+}
 
-// Nomes de coluna aceitos (case-insensitive)
+// ══ IMPORTAÇÃO EXCEL ══════════════════════════════════════════
 const COL_NUMERO   = ['número','numero','nº','n°','pedido','num','número do pedido'];
 const COL_CLIENTE  = ['cliente','razão social','razao social','nome cliente','empresa'];
 const COL_DATA     = ['dt. venda','dt venda','data venda','data','date','dt.venda','dtvenda'];
@@ -728,17 +700,14 @@ function detectarColunas(headerRow) {
 
 function excelDataParaISO(val) {
   if (!val && val !== 0) return today();
-  // Date object (cellDates:true)
   if (val instanceof Date) {
     const y = val.getFullYear(), m = String(val.getMonth()+1).padStart(2,'0'), d = String(val.getDate()).padStart(2,'0');
     return `${y}-${m}-${d}`;
   }
-  // Número serial do Excel (raw:true sem cellDates)
   if (typeof val === 'number') {
     const d = new Date(Math.round((val - 25569) * 86400 * 1000));
     return d.toISOString().slice(0,10);
   }
-  // String "17/04/2026"
   if (typeof val === 'string') {
     const parts = val.split('/');
     if (parts.length === 3) return `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
@@ -748,7 +717,6 @@ function excelDataParaISO(val) {
 }
 
 function extrairUFDoNome(nomeVendedor) {
-  // Tenta pegar estado do padrão "NOME - UF"
   const match = String(nomeVendedor||'').match(/[-–]\s*([A-Z]{2})\s*$/);
   if (match) {
     const uf = match[1].toUpperCase();
@@ -764,39 +732,22 @@ function jaImportado(numPedido) {
   return vendedores.some(v => (v.vendas||[]).some(vd => vd.numeroPedido === num));
 }
 
-// Converte qualquer formato de valor para número
-// Aceita: 2151.9 | 2151,9 | 1.234,56 | 1,234.56 | "R$ 1.234,56"
 function parseBRValor(val) {
   if (val === null || val === undefined || val === '') return NaN;
-  // Se já é número (SheetJS leu como float/int)
   if (typeof val === 'number') return val;
   let s = String(val).trim().replace(/[R$\s]/g, '');
-  // Detecta formato: se tem vírgula E ponto, descobre qual é o separador decimal
   const temPonto = s.includes('.');
   const temVirgula = s.includes(',');
   if (temPonto && temVirgula) {
-    // último separador é o decimal
     const ultimoPonto = s.lastIndexOf('.');
     const ultimaVirgula = s.lastIndexOf(',');
-    if (ultimaVirgula > ultimoPonto) {
-      // formato: 1.234,56 → BR
-      s = s.replace(/\./g, '').replace(',', '.');
-    } else {
-      // formato: 1,234.56 → EN
-      s = s.replace(/,/g, '');
-    }
+    if (ultimaVirgula > ultimoPonto) { s = s.replace(/\./g, '').replace(',', '.'); }
+    else { s = s.replace(/,/g, ''); }
   } else if (temVirgula) {
-    // Só vírgula: pode ser decimal (1234,56) ou milhar (1,234)
     const partes = s.split(',');
-    if (partes.length === 2 && partes[1].length <= 2) {
-      // decimal BR: 1234,56
-      s = s.replace(',', '.');
-    } else {
-      // milhar: 1,234,567
-      s = s.replace(/,/g, '');
-    }
+    if (partes.length === 2 && partes[1].length <= 2) { s = s.replace(',', '.'); }
+    else { s = s.replace(/,/g, ''); }
   }
-  // Remove qualquer char restante que não seja número ou ponto
   s = s.replace(/[^0-9.]/g, '');
   return parseFloat(s);
 }
@@ -804,41 +755,28 @@ function parseBRValor(val) {
 function iniciarImport(input) {
   const file = input.files[0];
   if (!file) return;
-  input.value = ''; // reset para permitir reimport do mesmo arquivo
-
+  input.value = '';
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
       const data = new Uint8Array(e.target.result);
       const workbook = XLSX.read(data, { type: 'array', cellDates: true });
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      // raw:true → números chegam como number, datas como Date (por causa de cellDates:true)
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: '' });
-
-      if (!rows || rows.length < 2) {
-        showToast('Planilha vazia ou sem dados');
-        return;
-      }
-
-      // Detectar linha de cabeçalho: primeira linha que tenha pelo menos 3 células preenchidas
+      if (!rows || rows.length < 2) { showToast('Planilha vazia ou sem dados'); return; }
       let headerIdx = 0;
       while (headerIdx < rows.length && rows[headerIdx].filter(c => String(c||'').trim()).length < 3) headerIdx++;
-
       const colMap = detectarColunas(rows[headerIdx]);
-
       if (colMap.valor === undefined || colMap.vendedor === undefined) {
-        alert('Não foi possível identificar as colunas de Valor e Vendedor.\n\nColunas encontradas: ' + rows[headerIdx].join(', ') + '\n\nNomeie as colunas como: Número, Cliente, Dt. Venda, Valor, Vendedor');
+        alert('Não foi possível identificar as colunas de Valor e Vendedor.\n\nColunas encontradas: ' + rows[headerIdx].join(', '));
         return;
       }
-
       importDados = [];
       for (let i = headerIdx + 1; i < rows.length; i++) {
         const row = rows[i];
-        if (!row || row.every(c => !c)) continue; // linha vazia
-        
+        if (!row || row.every(c => !c)) continue;
         const valor = parseBRValor(row[colMap.valor]);
         if (!valor || isNaN(valor)) continue;
-
         importDados.push({
           numero:   colMap.numero   !== undefined ? String(row[colMap.numero]||'').trim() : '',
           cliente:  colMap.cliente  !== undefined ? String(row[colMap.cliente]||'').trim() : '',
@@ -848,147 +786,81 @@ function iniciarImport(input) {
           rowIdx:   i
         });
       }
-
-      if (!importDados.length) {
-        showToast('Nenhuma linha válida encontrada');
-        return;
-      }
-
-      // Inicializar vínculos: tentar match automático com vendedores cadastrados
+      if (!importDados.length) { showToast('Nenhuma linha válida encontrada'); return; }
       importVinculo = {};
       const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor))];
       nomesUnicos.forEach(nomeXls => {
-        // Busca por similaridade
         const match = vendedores.find(v => {
           const vn = normNome(v.nome);
-          return vn === nomeXls || 
-                 vn.includes(nomeXls.split(' ')[0]) || 
-                 nomeXls.includes(vn.split(' ')[0]);
+          return vn === nomeXls || vn.includes(nomeXls.split(' ')[0]) || nomeXls.includes(vn.split(' ')[0]);
         });
         importVinculo[nomeXls] = match ? match.id : 'NOVO';
       });
-
       renderImportStep1();
       document.getElementById('modalImport').classList.add('open');
-    } catch(err) {
-      console.error(err);
-      alert('Erro ao ler a planilha: ' + err.message);
-    }
+    } catch(err) { console.error(err); alert('Erro ao ler a planilha: ' + err.message); }
   };
   reader.readAsArrayBuffer(file);
 }
 
 function renderImportStep1() {
-  importStep = 1;
-  atualizarStepNav();
-
+  importStep = 1; atualizarStepNav();
   const total = importDados.length;
   const duplicados = importDados.filter(d => d.numero && jaImportado(d.numero)).length;
   const novos = total - duplicados;
   const semVendedor = importDados.filter(d => !d.vendedor).length;
-
   document.getElementById('importStatsRow').innerHTML = `
     <div class="import-stat is-total">📋 ${total} pedidos</div>
     <div class="import-stat is-novo">🟢 ${novos} novos</div>
     ${duplicados ? `<div class="import-stat is-dup">🟡 ${duplicados} duplicados</div>` : ''}
-    ${semVendedor ? `<div class="import-stat is-sem-vendedor">⚠ ${semVendedor} sem vendedor</div>` : ''}
-  `;
-
+    ${semVendedor ? `<div class="import-stat is-sem-vendedor">⚠ ${semVendedor} sem vendedor</div>` : ''}`;
   const tbody = document.getElementById('importPreviewBody');
   tbody.innerHTML = importDados.slice(0,10).map(d => {
     const dup = d.numero && jaImportado(d.numero);
     const temVendedor = !!d.vendedor;
     const rowClass = dup ? 'dup' : (temVendedor ? 'novo' : '');
-    return `<tr class="${rowClass}">
-      <td>${d.numero||'—'}</td>
-      <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.cliente||'—'}</td>
-      <td>${d.data}</td>
-      <td><strong>${fmt(d.valor)}</strong></td>
-      <td>${d.vendedor||'<em style="color:var(--red)">não encontrado</em>'}</td>
-      <td>${dup ? '🟡 Duplicado' : (temVendedor ? '🟢 Novo' : '⬜ Sem vendedor')}</td>
-    </tr>`;
+    return `<tr class="${rowClass}"><td>${d.numero||'—'}</td><td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.cliente||'—'}</td><td>${d.data}</td><td><strong>${fmt(d.valor)}</strong></td><td>${d.vendedor||'<em style="color:var(--red)">não encontrado</em>'}</td><td>${dup ? '🟡 Duplicado' : (temVendedor ? '🟢 Novo' : '⬜ Sem vendedor')}</td></tr>`;
   }).join('');
-
-  if (importDados.length > 10) {
-    tbody.innerHTML += `<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:8px;font-size:11px">... e mais ${importDados.length-10} linhas</td></tr>`;
-  }
-
+  if (importDados.length > 10) tbody.innerHTML += `<tr><td colspan="6" style="text-align:center;color:var(--text2);padding:8px;font-size:11px">... e mais ${importDados.length-10} linhas</td></tr>`;
   document.getElementById('btnStep2').disabled = false;
 }
 
 function renderImportStep2() {
-  importStep = 2;
-  atualizarStepNav();
+  importStep = 2; atualizarStepNav();
   const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor).filter(Boolean))];
   const container = document.getElementById('importVendedoresMatch');
-
   container.innerHTML = nomesUnicos.map(nome => {
-    const opcoes = vendedores.map(v =>
-      `<option value="${v.id}" ${importVinculo[nome]===v.id?'selected':''}>${v.nome}${v.uf?' ('+v.uf+')':''}</option>`
-    ).join('');
+    const opcoes = vendedores.map(v => `<option value="${v.id}" ${importVinculo[nome]===v.id?'selected':''}>${v.nome}${v.uf?' ('+v.uf+')':''}</option>`).join('');
     const vinculo = importVinculo[nome];
-    const statusLabel = vinculo === 'IGNORAR' 
-      ? '<span class="ivm-status ivm-ignorar">Ignorar</span>'
-      : vinculo === 'NOVO' 
-        ? '<span class="ivm-status ivm-novo">Criar novo</span>'
-        : '<span class="ivm-status ivm-ok">Vinculado</span>';
+    const statusLabel = vinculo === 'IGNORAR' ? '<span class="ivm-status ivm-ignorar">Ignorar</span>' : vinculo === 'NOVO' ? '<span class="ivm-status ivm-novo">Criar novo</span>' : '<span class="ivm-status ivm-ok">Vinculado</span>';
     const qtd = importDados.filter(d=>d.vendedor===nome).length;
-    return `<div class="import-vendedor-match">
-      <div class="ivm-header">
-        <div class="ivm-nome">📋 ${nome}</div>
-        <div class="ivm-count">${qtd} pedido${qtd!==1?'s':''}</div>
-        ${statusLabel}
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <select class="ivm-select" id="vinc_${btoa(nome).replace(/[^a-z0-9]/gi,'')}" onchange="atualizarVinculo('${nome.replace(/'/g,"\\'")}', this.value)">
-          <option value="NOVO" ${vinculo==='NOVO'?'selected':''}>➕ Criar novo vendedor</option>
-          <option value="IGNORAR" ${vinculo==='IGNORAR'?'selected':''}>🚫 Ignorar estes pedidos</option>
-          ${opcoes}
-        </select>
-      </div>
-    </div>`;
+    return `<div class="import-vendedor-match"><div class="ivm-header"><div class="ivm-nome">📋 ${nome}</div><div class="ivm-count">${qtd} pedido${qtd!==1?'s':''}</div>${statusLabel}</div><div style="display:flex;gap:8px;align-items:center"><select class="ivm-select" onchange="atualizarVinculo('${nome.replace(/'/g,"\\'")}', this.value)"><option value="NOVO" ${vinculo==='NOVO'?'selected':''}>➕ Criar novo vendedor</option><option value="IGNORAR" ${vinculo==='IGNORAR'?'selected':''}>🚫 Ignorar estes pedidos</option>${opcoes}</select></div></div>`;
   }).join('');
 }
 
-function atualizarVinculo(nome, valor) {
-  importVinculo[nome] = valor;
-  // Atualizar badge status
-  renderImportStep2();
-}
+function atualizarVinculo(nome, valor) { importVinculo[nome] = valor; renderImportStep2(); }
 
 function renderImportStep3() {
-  importStep = 3;
-  atualizarStepNav();
-
+  importStep = 3; atualizarStepNav();
   const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor).filter(Boolean))];
-  let totalImportar = 0, totalIgnorar = 0, totalNovos = 0, totalVinculados = 0;
-
+  let totalImportar = 0, totalIgnorar = 0, totalNovos = 0;
   nomesUnicos.forEach(nome => {
     const vinculo = importVinculo[nome];
     const qtd = importDados.filter(d=>d.vendedor===nome).length;
     if (vinculo === 'IGNORAR') { totalIgnorar += qtd; return; }
     totalImportar += qtd;
     if (vinculo === 'NOVO') totalNovos++;
-    else totalVinculados++;
   });
-
   document.getElementById('importConfirmStats').innerHTML = `
     <div class="import-stat is-novo">✅ ${totalImportar} pedidos a importar</div>
     ${totalIgnorar ? `<div class="import-stat is-dup">🚫 ${totalIgnorar} ignorados</div>` : ''}
     ${totalNovos ? `<div class="import-stat is-sem-vendedor">➕ ${totalNovos} vendedores novos</div>` : ''}
-    <div class="import-stat is-total">💰 ${fmt(importDados.filter(d=>importVinculo[d.vendedor]!=='IGNORAR').reduce((a,b)=>a+b.valor,0))}</div>
-  `;
-
+    <div class="import-stat is-total">💰 ${fmt(importDados.filter(d=>importVinculo[d.vendedor]!=='IGNORAR').reduce((a,b)=>a+b.valor,0))}</div>`;
   const resumo = nomesUnicos.filter(n=>importVinculo[n]!=='IGNORAR').map(nome => {
     const vinculo = importVinculo[nome];
     const qtd = importDados.filter(d=>d.vendedor===nome).length;
     const vendLabel = vinculo === 'NOVO' ? `<em>Criar "${nome}"</em>` : (vendedores.find(v=>v.id===vinculo)?.nome||'?');
-    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
-      <span style="flex:1">${nome}</span>
-      <span style="color:var(--text2)">→</span>
-      <span style="font-weight:600;color:var(--blue)">${vendLabel}</span>
-      <span style="color:var(--text2)">(${qtd} pedidos)</span>
-    </div>`;
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="flex:1">${nome}</span><span style="color:var(--text2)">→</span><span style="font-weight:600;color:var(--blue)">${vendLabel}</span><span style="color:var(--text2)">(${qtd} pedidos)</span></div>`;
   }).join('');
   document.getElementById('importResumoVendedores').innerHTML = resumo || '<p style="color:var(--text2);font-size:12px">Nenhum vendedor para importar.</p>';
 }
@@ -998,82 +870,43 @@ function atualizarStepNav() {
     const el = document.getElementById('sn'+n);
     el.className = 'step-item' + (n===importStep?' active':'') + (n<importStep?' done':'');
   });
-  document.querySelectorAll('.import-step').forEach((s,i)=>{
-    s.classList.toggle('active', i+1===importStep);
-  });
+  document.querySelectorAll('.import-step').forEach((s,i)=>{ s.classList.toggle('active', i+1===importStep); });
 }
-
-function irParaStep(n) {
-  if (n===2) renderImportStep2();
-  else if (n===3) renderImportStep3();
-  else renderImportStep1();
-}
+function irParaStep(n) { if(n===2) renderImportStep2(); else if(n===3) renderImportStep3(); else renderImportStep1(); }
 
 function confirmarImport() {
   const substituir = document.getElementById('importSubstituir').checked;
   const criarNovos = document.getElementById('importCriarNovos').checked;
-  
   let adicionados = 0, substituidos = 0, novosVendedores = 0, ignorados = 0;
-
-  // 1) Criar novos vendedores se necessário
   const nomesUnicos = [...new Set(importDados.map(d=>d.vendedor).filter(Boolean))];
   nomesUnicos.forEach(nome => {
     if (importVinculo[nome] === 'NOVO' && criarNovos) {
       const uf = extrairUFDoNome(nome);
       const novoId = uid();
-      vendedores.push({
-        id: novoId,
-        nome: nome,
-        meta: 0,
-        cor: 'azul',
-        uf: uf,
-        vendas: []
-      });
+      vendedores.push({ id: novoId, nome: nome, meta: 0, cor: 'azul', uf: uf, vendas: [] });
       importVinculo[nome] = novoId;
       novosVendedores++;
     }
   });
-
-  // 2) Adicionar pedidos
   importDados.forEach(d => {
     const vinculo = importVinculo[d.vendedor];
     if (!vinculo || vinculo === 'IGNORAR' || vinculo === 'NOVO') { ignorados++; return; }
-    
     const vendedor = vendedores.find(v=>v.id===vinculo);
     if (!vendedor) { ignorados++; return; }
     if (!vendedor.vendas) vendedor.vendas = [];
-
     const dup = d.numero && vendedor.vendas.find(vd=>vd.numeroPedido===d.numero);
     if (dup) {
-      if (substituir) {
-        const idx = vendedor.vendas.findIndex(vd=>vd.numeroPedido===d.numero);
-        vendedor.vendas[idx] = { id:dup.id, numeroPedido:d.numero, valor:d.valor, data:d.data, desc:d.cliente };
-        substituidos++;
-      } else {
-        ignorados++;
-      }
+      if (substituir) { const idx = vendedor.vendas.findIndex(vd=>vd.numeroPedido===d.numero); vendedor.vendas[idx] = { id:dup.id, numeroPedido:d.numero, valor:d.valor, data:d.data, desc:d.cliente }; substituidos++; }
+      else { ignorados++; }
       return;
     }
-
-    vendedor.vendas.push({
-      id: uid(),
-      numeroPedido: d.numero,
-      valor: d.valor,
-      data: d.data,
-      desc: d.cliente
-    });
+    vendedor.vendas.push({ id: uid(), numeroPedido: d.numero, valor: d.valor, data: d.data, desc: d.cliente });
     adicionados++;
   });
-
-  save();
-  closeModal('modalImport');
-  renderAll();
-
-  const msg = `✅ Importado! ${adicionados} pedidos adicionados${substituidos?', '+substituidos+' substituídos':''}${novosVendedores?', '+novosVendedores+' vendedores criados':''}`;
-  showToast(msg);
+  save(); closeModal('modalImport'); renderAll();
+  showToast(`✅ Importado! ${adicionados} pedidos adicionados${substituidos?', '+substituidos+' substituídos':''}${novosVendedores?', '+novosVendedores+' vendedores criados':''}`);
 }
 
-// Gerar modelo Excel para download
 function baixarModeloExcel() {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet([
@@ -1088,9 +921,7 @@ function baixarModeloExcel() {
   showToast('Modelo baixado!');
 }
 
-// ══════════════════════════════════════════════════════════════
-// NAVEGAÇÃO
-// ══════════════════════════════════════════════════════════════
+// ══ NAVEGAÇÃO ═════════════════════════════════════════════════
 function showPage(id,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1104,9 +935,7 @@ function setFiltro(f,btn){
   btn.classList.add('active');renderAll();
 }
 
-// ══════════════════════════════════════════════════════════════
-// LOGO
-// ══════════════════════════════════════════════════════════════
+// ══ LOGO ══════════════════════════════════════════════════════
 function loadLogo(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1130,9 +959,7 @@ function loadLogo(input){
   document.getElementById('logoText').style.display='none';
 })();
 
-// ══════════════════════════════════════════════════════════════
-// UF
-// ══════════════════════════════════════════════════════════════
+// ══ UF ════════════════════════════════════════════════════════
 function buildUFGrid(gridId, selected){
   document.getElementById(gridId).innerHTML=UFS.map(u=>
     `<div class="uf-opt${u.uf===selected?' sel':''}" onclick="selectUF('${u.uf}','${gridId}')" title="${u.nome}">${u.uf}</div>`
@@ -1151,9 +978,7 @@ function buildUFFilterSelect(){
     ufsUsadas.map(uf=>`<option value="${uf}"${uf===atual?' selected':''}>${uf} — ${nomeUF(uf)}</option>`).join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-// MODAL VENDEDOR
-// ══════════════════════════════════════════════════════════════
+// ══ MODAL VENDEDOR ════════════════════════════════════════════
 function openModal(mode,id=null){
   editId=id;
   document.getElementById('modalTitle').textContent=mode==='add'?'Novo Vendedor':'Editar Vendedor';
@@ -1191,9 +1016,7 @@ function deletarVendedor(id){
   save();renderAll();showToast('Vendedor removido');
 }
 
-// ══════════════════════════════════════════════════════════════
-// MODAL VENDA
-// ══════════════════════════════════════════════════════════════
+// ══ MODAL VENDA ═══════════════════════════════════════════════
 function openModalVenda(id){
   vendaVendedorId=id;
   const v=vendedores.find(x=>x.id===id);
@@ -1233,9 +1056,7 @@ function deletarVenda(vid,vendaId){
   save();renderVendasModal(v);renderAll();showToast('Venda removida');
 }
 
-// ══════════════════════════════════════════════════════════════
-// MODAL REPRESENTANTE TOTAL
-// ══════════════════════════════════════════════════════════════
+// ══ MODAL REPRESENTANTE TOTAL ═════════════════════════════════
 function openModalRepTotal(mode, id=null){
   editRepId = id;
   document.getElementById('modalRepTotalTitle').textContent = mode==='add'?'Novo Representante':'Editar Representante';
@@ -1278,9 +1099,7 @@ function salvarRepTotal(){
   const nome = document.getElementById('rtNome').value.trim();
   if(!nome){showToast('Informe o nome');return;}
   const obj = {
-    nome,
-    uf: ufRepSelecionada,
-    status: statusRepSelecionado,
+    nome, uf: ufRepSelecionada, status: statusRepSelecionado,
     obs: document.getElementById('rtObs').value.trim(),
     faltaAcesso: document.getElementById('rtAcesso').checked,
     faltaMala: document.getElementById('rtMala').checked,
@@ -1296,9 +1115,7 @@ function salvarRepTotal(){
     representantes.push({id:uid(), ...obj});
     showToast('Representante adicionado');
   }
-  save();
-  closeModal('modalRepTotal');
-  renderRepTotal();
+  save(); closeModal('modalRepTotal'); renderRepTotal();
 }
 function deletarRepTotal(id){
   if(!confirm('Excluir este representante?'))return;
@@ -1306,13 +1123,12 @@ function deletarRepTotal(id){
   save();renderRepTotal();showToast('Removido');
 }
 
-// ══════════════════════════════════════════════════════════════
-// RENDER PRINCIPAL
-// ══════════════════════════════════════════════════════════════
+// ══ RENDER PRINCIPAL ══════════════════════════════════════════
 function renderAll(){renderVendedores();renderStats();renderMetas();renderRanking();renderEstados();buildUFFilterSelect();renderRepTotal();}
 
 const tagLabels={verde:'Alto Potencial',azul:'Bom Potencial',amarelo:'Em Desenvolvimento',vermelho:'Atenção'};
 
+// ── renderVendedores com filtro por stat ──────────────────────
 function renderVendedores(){
   const filtroUF = document.getElementById('filtroUFVendedores')?.value||'';
   const busca = (document.getElementById('buscaNomeVendedor')?.value||'').toLowerCase().trim();
@@ -1320,11 +1136,37 @@ function renderVendedores(){
   let lista = vendedores;
   if(filtroUF) lista = lista.filter(v=>v.uf===filtroUF);
   if(busca) lista = lista.filter(v=>v.nome.toLowerCase().includes(busca));
+
+  // Filtro por stat card
+  if(filtroStatAtivo==='bateram') lista = lista.filter(v=>totalPeriodo(v)>=v.meta && v.meta>0);
+  if(filtroStatAtivo==='abaixo')  lista = lista.filter(v=>totalPeriodo(v)<v.meta && vendasNoPeriodo(v).length>0);
+  if(filtroStatAtivo==='sem')     lista = lista.filter(v=>vendasNoPeriodo(v).length===0);
+
+  // Banner de filtro ativo
+  const bannerContainer = document.getElementById('statFilterBannerContainer');
+  if(filtroStatAtivo){
+    const configs = {
+      bateram: { label:'✅ Mostrando apenas: Bateram a meta', cls:'banner-green' },
+      abaixo:  { label:'⚠️ Mostrando apenas: Abaixo da meta (mas vendendo)', cls:'banner-yellow' },
+      sem:     { label:'🔴 Mostrando apenas: Sem vendas no período', cls:'banner-red' }
+    };
+    const cfg = configs[filtroStatAtivo];
+    bannerContainer.innerHTML = `<div class="stat-filter-banner ${cfg.cls}">
+      <span>${cfg.label} &nbsp;·&nbsp; <strong>${lista.length}</strong> vendedor${lista.length!==1?'es':''} encontrado${lista.length!==1?'s':''}</span>
+      <button class="banner-clear-btn" onclick="toggleStatFilter('')" title="Limpar filtro">✕ Limpar filtro</button>
+    </div>`;
+  } else {
+    bannerContainer.innerHTML = '';
+  }
+
   if(!lista.length){
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
-      <div class="icon">👥</div>
-      <h3>${busca?'Nenhum vendedor com "'+busca+'"':(filtroUF?'Nenhum representante em '+filtroUF:'Nenhum vendedor cadastrado')}</h3>
-      <p>${(busca||filtroUF)?'Tente outro filtro':'Clique em "Novo Vendedor" para começar'}</p></div>`;
+    const msgs = {
+      bateram: { h:'Nenhum vendedor bateu a meta', p:'Ninguém atingiu 100% da meta no período selecionado.' },
+      abaixo:  { h:'Nenhum vendedor abaixo da meta', p:'Todos venderam o suficiente ou não há vendas no período.' },
+      sem:     { h:'Todos venderam no período', p:'Não há vendedores sem nenhuma venda registrada.' },
+    };
+    const m = msgs[filtroStatAtivo] || { h: busca?`Nenhum resultado para "${busca}"`:(filtroUF?`Nenhum representante em ${filtroUF}`:'Nenhum vendedor cadastrado'), p: (busca||filtroUF)?'Tente outro filtro':'Clique em "Novo Vendedor" para começar' };
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="icon">${filtroStatAtivo==='bateram'?'🏆':filtroStatAtivo==='abaixo'?'📉':filtroStatAtivo==='sem'?'💤':'👥'}</div><h3>${m.h}</h3><p>${m.p}</p></div>`;
     return;
   }
   grid.innerHTML=lista.map(v=>{
@@ -1360,18 +1202,40 @@ function renderVendedores(){
   }).join('');
 }
 
+// ── renderStats com cards clicáveis ──────────────────────────
 function renderStats(){
   const total=vendedores.length;
-  const bateram=vendedores.filter(v=>totalPeriodo(v)>=v.meta).length;
+  const bateram=vendedores.filter(v=>totalPeriodo(v)>=v.meta && v.meta>0).length;
   const nao=vendedores.filter(v=>totalPeriodo(v)<v.meta&&vendasNoPeriodo(v).length>0).length;
   const sem=vendedores.filter(v=>vendasNoPeriodo(v).length===0).length;
   const fat=vendedores.reduce((a,v)=>a+totalPeriodo(v),0);
+  const a = filtroStatAtivo;
   document.getElementById('statsRow').innerHTML=`
-    <div class="stat-card s-blue"><div class="label">Vendedores</div><div class="value">${total}</div><div class="sub">cadastrados</div></div>
-    <div class="stat-card s-green"><div class="label">Bateram Meta</div><div class="value">${bateram}</div><div class="sub">no período</div></div>
-    <div class="stat-card s-yellow"><div class="label">Abaixo da Meta</div><div class="value">${nao}</div><div class="sub">mas vendendo</div></div>
-    <div class="stat-card s-red"><div class="label">Sem Vender</div><div class="value">${sem}</div><div class="sub">no período</div></div>
-    <div class="stat-card s-blue"><div class="label">Faturamento Total</div><div class="value" style="font-size:17px">${fmt(fat)}</div><div class="sub">no período</div></div>`;
+    <div class="stat-card s-blue clickable" onclick="toggleStatFilter('')" title="Ver todos os vendedores" style="${!a?'border-color:var(--blue);box-shadow:0 0 0 2px var(--blue);':''}">
+      <div class="label">Vendedores</div>
+      <div class="value">${total}</div>
+      <div class="sub">cadastrados${!a?' ← filtro ativo':''}</div>
+    </div>
+    <div class="stat-card s-green clickable${a==='bateram'?' stat-active':''}" onclick="toggleStatFilter('bateram')" title="Clique para ver quem bateu a meta">
+      <div class="label">Bateram Meta <span class="click-hint">▶ ver quem</span></div>
+      <div class="value">${bateram}</div>
+      <div class="sub">no período</div>
+    </div>
+    <div class="stat-card s-yellow clickable${a==='abaixo'?' stat-active':''}" onclick="toggleStatFilter('abaixo')" title="Clique para ver quem está abaixo da meta">
+      <div class="label">Abaixo da Meta <span class="click-hint">▶ ver quem</span></div>
+      <div class="value">${nao}</div>
+      <div class="sub">mas vendendo</div>
+    </div>
+    <div class="stat-card s-red clickable${a==='sem'?' stat-active':''}" onclick="toggleStatFilter('sem')" title="Clique para ver quem não vendeu">
+      <div class="label">Sem Vender <span class="click-hint">▶ ver quem</span></div>
+      <div class="value">${sem}</div>
+      <div class="sub">no período</div>
+    </div>
+    <div class="stat-card s-blue">
+      <div class="label">Faturamento Total</div>
+      <div class="value" style="font-size:17px">${fmt(fat)}</div>
+      <div class="sub">no período</div>
+    </div>`;
 }
 
 function pizzaSVG(pct,cor){
@@ -1404,10 +1268,8 @@ function renderMetas(){
     return `<div class="meta-card">
       <div class="meta-header">
         <div style="width:3px;height:32px;background:${c[v.cor]};border-radius:2px;flex-shrink:0"></div>
-        <div style="flex:1">
-          <div class="meta-name">${v.nome}${v.uf?` <span class="uf-badge">${v.uf}</span>`:''}</div>
-          <span class="vtag vtag-${v.cor}" style="margin-top:3px;display:inline-block">${v.cor}</span>
-        </div>
+        <div style="flex:1"><div class="meta-name">${v.nome}${v.uf?` <span class="uf-badge">${v.uf}</span>`:''}</div>
+        <span class="vtag vtag-${v.cor}" style="margin-top:3px;display:inline-block">${v.cor}</span></div>
         <span style="font-size:11px;color:var(--text2)">${nv} venda${nv!==1?'s':''}</span>
       </div>
       <div class="pizza-wrap">
@@ -1496,31 +1358,16 @@ function renderEstados(){
       return `<div class="estado-card">
         <div class="estado-header">
           <div class="estado-uf-box" style="background:${cor}22;color:${cor}">${e.uf}</div>
-          <div class="estado-info">
-            <div class="estado-name">${e.nome}</div>
-            <div class="estado-reps-count">${nReps} representante${nReps!==1?'s':''}</div>
-          </div>
-          <div class="estado-fat-box">
-            <div class="estado-fat">${fmt(e.fat)}</div>
-            <div class="estado-pct-label">${pct}% do total</div>
-          </div>
+          <div class="estado-info"><div class="estado-name">${e.nome}</div><div class="estado-reps-count">${nReps} representante${nReps!==1?'s':''}</div></div>
+          <div class="estado-fat-box"><div class="estado-fat">${fmt(e.fat)}</div><div class="estado-pct-label">${pct}% do total</div></div>
         </div>
         <div class="estado-body">
           <div class="rep-chips">${e.reps.map(r=>`<span class="rep-chip">${r.nome}</span>`).join('')}</div>
-          <div class="estado-progress-label">
-            <span>Atingimento de meta</span>
-            <span style="font-weight:600;color:${metaPct>=100?'var(--green)':metaPct>=50?'var(--yellow)':'var(--red)'}">${metaPct}%</span>
-          </div>
+          <div class="estado-progress-label"><span>Atingimento de meta</span><span style="font-weight:600;color:${metaPct>=100?'var(--green)':metaPct>=50?'var(--yellow)':'var(--red)'}">${metaPct}%</span></div>
           <div class="estado-bar"><div class="estado-bar-fill" style="width:${metaPct}%;background:${cor}"></div></div>
-          <div class="estado-meta-row">
-            <span>Meta: ${fmt(e.meta)}</span>
-            <span style="color:var(--red)">Falta: ${fmt(Math.max(0,e.meta-e.fat))}</span>
-          </div>
+          <div class="estado-meta-row"><span>Meta: ${fmt(e.meta)}</span><span style="color:var(--red)">Falta: ${fmt(Math.max(0,e.meta-e.fat))}</span></div>
         </div>
-        <div class="estado-footer">
-          <span class="estado-badge ${badgeClass}">${badgeLabel}</span>
-          <span style="font-size:11px;color:var(--text2)">${podeCrescerMsg}</span>
-        </div>
+        <div class="estado-footer"><span class="estado-badge ${badgeClass}">${badgeLabel}</span><span style="font-size:11px;color:var(--text2)">${podeCrescerMsg}</span></div>
       </div>`;
     }).join('');
   }
@@ -1557,19 +1404,11 @@ function renderPizzaEstados(dados,fatTotal){
   legend.innerHTML=dados.map((e,idx)=>{
     const pct=Math.round(e.fat/fatTotal*100);
     const cor=PIZZA_COLORS[idx%PIZZA_COLORS.length];
-    return `<div class="pl-item">
-      <div class="pl-dot" style="background:${cor}"></div>
-      <span class="pl-uf">${e.uf}</span>
-      <span class="pl-name">${e.nome}</span>
-      <span class="pl-pct" style="color:${cor}">${pct}%</span>
-      <span class="pl-val">${fmt(e.fat)}</span>
-    </div>`;
+    return `<div class="pl-item"><div class="pl-dot" style="background:${cor}"></div><span class="pl-uf">${e.uf}</span><span class="pl-name">${e.nome}</span><span class="pl-pct" style="color:${cor}">${pct}%</span><span class="pl-val">${fmt(e.fat)}</span></div>`;
   }).join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-// RENDER REPRESENTANTES TOTAIS
-// ══════════════════════════════════════════════════════════════
+// ══ RENDER REPRESENTANTES TOTAIS ══════════════════════════════
 const statusConfig = {
   prospeccao: { label:'Prospectando', icon:'🔍', cor:'#7c3aed', bg:'#f5f3ff', countBg:'#ede9fe', countColor:'#7c3aed' },
   ativo:      { label:'Ativo',         icon:'✅', cor:'#16a34a', bg:'#f0fdf4', countBg:'#dcfce7', countColor:'#16a34a' },
@@ -1582,49 +1421,41 @@ function renderRepTotal(){
   let lista = representantes;
   if(busca) lista = lista.filter(r=>r.nome.toLowerCase().includes(busca));
   if(filtroStatus) lista = lista.filter(r=>r.status===filtroStatus);
-
-  const ativos       = representantes.filter(r=>r.status==='ativo').length;
-  const prospectando = representantes.filter(r=>r.status==='prospeccao').length;
-  const malaVoltar   = representantes.filter(r=>r.status==='inativo'&&r.malaVoltar).length;
-  const faltaMala    = representantes.filter(r=>r.faltaMala).length;
-  const faltaAcesso  = representantes.filter(r=>r.faltaAcesso).length;
-
+  const ativos=representantes.filter(r=>r.status==='ativo').length;
+  const prospectando=representantes.filter(r=>r.status==='prospeccao').length;
+  const malaVoltar=representantes.filter(r=>r.status==='inativo'&&r.malaVoltar).length;
+  const faltaMala=representantes.filter(r=>r.faltaMala).length;
+  const faltaAcesso=representantes.filter(r=>r.faltaAcesso).length;
   document.getElementById('repSummaryBar').innerHTML=`
     <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--green)">${ativos}</span><span style="color:var(--text2)">Ativos</span></div>
     <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--purple)">${prospectando}</span><span style="color:var(--text2)">Prospectando</span></div>
     <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${malaVoltar}</span><span style="color:var(--text2)">Malas a voltar</span></div>
     <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--yellow)">${faltaMala}</span><span style="color:var(--text2)">Falta mala</span></div>
-    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${faltaAcesso}</span><span style="color:var(--text2)">Falta acesso</span></div>
-  `;
-
-  const board = document.getElementById('kanbanBoard');
-  const cols = Object.entries(statusConfig).map(([key, cfg])=>{
-    const cards = lista.filter(r=>r.status===key);
-    const allOfStatus = representantes.filter(r=>r.status===key);
-    const cardsHtml = cards.length===0
-      ? `<div style="text-align:center;padding:16px;font-size:12px;color:var(--text2)">Nenhum representante</div>`
-      : cards.map(r=>{
-          const tags = [];
-          if(r.faltaAcesso)    tags.push(`<span class="rep-tag tag-acesso">⚠ Acesso</span>`);
-          if(r.faltaMala)      tags.push(`<span class="rep-tag tag-mala">📦 Mala</span>`);
-          if(r.faltaTreinamento) tags.push(`<span class="rep-tag tag-treinamento">📚 Treinamento</span>`);
-          if(r.malaVoltar && key==='inativo') tags.push(`<span class="rep-tag" style="background:#fee2e2;color:#dc2626">📦 Mala a devolver</span>`);
-          if(!r.faltaAcesso&&!r.faltaMala&&!r.faltaTreinamento&&!r.malaVoltar) tags.push(`<span class="rep-tag tag-ok">✓ Sem pendências</span>`);
-          return `<div class="rep-card" style="border-left:3px solid ${cfg.cor}">
-            <div class="rep-card-top">
-              <div class="rep-card-name" style="color:${cfg.cor}">${r.nome}</div>
-              ${r.uf?`<span class="rep-card-uf">${r.uf}</span>`:''}
-            </div>
-            ${r.obs?`<div class="rep-card-obs">${r.obs}</div>`:''}
-            <div class="rep-card-tags">${tags.join('')}</div>
-            <div style="font-size:10px;color:var(--text2);margin-bottom:6px">Cadastrado: ${r.criadoEm||'—'}</div>
-            <div class="rep-card-actions">
-              <button class="btn-icon" onclick="openModalRepTotal('edit','${r.id}')" title="Editar">✎</button>
-              <button class="btn-icon del" onclick="deletarRepTotal('${r.id}')" title="Excluir">✕</button>
-            </div>
-          </div>`;
-        }).join('');
-
+    <div class="rep-summary-item"><span class="rep-summary-num" style="color:var(--red)">${faltaAcesso}</span><span style="color:var(--text2)">Falta acesso</span></div>`;
+  const board=document.getElementById('kanbanBoard');
+  const cols=Object.entries(statusConfig).map(([key,cfg])=>{
+    const cards=lista.filter(r=>r.status===key);
+    const allOfStatus=representantes.filter(r=>r.status===key);
+    const cardsHtml=cards.length===0
+      ?`<div style="text-align:center;padding:16px;font-size:12px;color:var(--text2)">Nenhum representante</div>`
+      :cards.map(r=>{
+        const tags=[];
+        if(r.faltaAcesso) tags.push(`<span class="rep-tag tag-acesso">⚠ Acesso</span>`);
+        if(r.faltaMala) tags.push(`<span class="rep-tag tag-mala">📦 Mala</span>`);
+        if(r.faltaTreinamento) tags.push(`<span class="rep-tag tag-treinamento">📚 Treinamento</span>`);
+        if(r.malaVoltar&&key==='inativo') tags.push(`<span class="rep-tag" style="background:#fee2e2;color:#dc2626">📦 Mala a devolver</span>`);
+        if(!r.faltaAcesso&&!r.faltaMala&&!r.faltaTreinamento&&!r.malaVoltar) tags.push(`<span class="rep-tag tag-ok">✓ Sem pendências</span>`);
+        return `<div class="rep-card" style="border-left:3px solid ${cfg.cor}">
+          <div class="rep-card-top"><div class="rep-card-name" style="color:${cfg.cor}">${r.nome}</div>${r.uf?`<span class="rep-card-uf">${r.uf}</span>`:''}</div>
+          ${r.obs?`<div class="rep-card-obs">${r.obs}</div>`:''}
+          <div class="rep-card-tags">${tags.join('')}</div>
+          <div style="font-size:10px;color:var(--text2);margin-bottom:6px">Cadastrado: ${r.criadoEm||'—'}</div>
+          <div class="rep-card-actions">
+            <button class="btn-icon" onclick="openModalRepTotal('edit','${r.id}')" title="Editar">✎</button>
+            <button class="btn-icon del" onclick="deletarRepTotal('${r.id}')" title="Excluir">✕</button>
+          </div>
+        </div>`;
+      }).join('');
     return `<div class="kanban-col col-${key}">
       <div class="kanban-col-header" style="background:${cfg.bg}">
         <div class="kanban-col-title" style="color:${cfg.cor}">${cfg.icon} ${cfg.label}</div>
@@ -1633,12 +1464,10 @@ function renderRepTotal(){
       <div class="kanban-col-body">${cardsHtml}</div>
     </div>`;
   });
-  board.innerHTML = cols.join('');
+  board.innerHTML=cols.join('');
 }
 
-// ══════════════════════════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════════════════════════
+// ══ INIT ══════════════════════════════════════════════════════
 document.getElementById('filtroData').value=today();
 document.getElementById('filtroDataRank').value=today();
 document.getElementById('filtroDataEstados').value=today();
